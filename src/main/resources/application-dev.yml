@@ -1,7 +1,7 @@
 logging:
   file:
     name: cms-dev.log
-    path: logs/
+    path: ~/work/logs/
   level:
     root: info
     web: info
