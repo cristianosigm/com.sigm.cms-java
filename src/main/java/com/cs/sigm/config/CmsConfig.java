@@ -16,6 +16,8 @@ public class CmsConfig {
 
 	public static final String RESPONSE_SUCCESS = "SUCCESS";
 
+	public static final String LOGGING_FILE_PATH = System.getenv("LOGGING_FILE_PATH");
+
 	private String version;
 
 	private Boolean production;

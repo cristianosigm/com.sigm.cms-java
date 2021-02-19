@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Table;
 
 import com.sun.istack.NotNull;
@@ -24,7 +25,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "tbl_user")
+@Table(name = "tbl_user", indexes = { 
+	@Index(name = "idx_user_username", columnList = "username"), 
+	@Index(name = "idx_user_email", columnList = "email") 
+})
 public class User implements Serializable {
 
 	private static final long serialVersionUID = 8972684400155836411L;

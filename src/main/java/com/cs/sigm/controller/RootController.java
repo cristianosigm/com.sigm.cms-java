@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cs.sigm.config.CmsConfig;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestController
 @RequestMapping(value = "/")
 public class RootController {
@@ -16,6 +19,9 @@ public class RootController {
 
 	@GetMapping
 	public String getVersion() {
+		
+		log.info("Log path: " + CmsConfig.LOGGING_FILE_PATH);
+		
 		return "Marketing Portal API - version: ".concat(config.getVersion());
 	}
 

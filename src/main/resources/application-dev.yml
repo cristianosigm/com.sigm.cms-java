@@ -1,7 +1,7 @@
 logging:
   file:
     name: cms-dev.log
-    path: ~/work/logs/
+    path: logs/
   level:
     root: info
     web: info
@@ -38,7 +38,7 @@ spring:
     hibernate:
       ddl-auto: create-drop
     open-in-view: true
-    show-sql: false
+    show-sql: true
   servlet:
     multipart:
       enabled: true
