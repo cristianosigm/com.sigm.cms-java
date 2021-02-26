@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
 
 import com.sun.istack.NotNull;
 
@@ -25,10 +26,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "tbl_user", indexes = { 
-	@Index(name = "idx_user_username", columnList = "username"), 
-	@Index(name = "idx_user_email", columnList = "email") 
-})
+@Table(name = "tbl_user", indexes = { @Index(name = "idx_user_username", columnList = "username"),
+		@Index(name = "idx_user_email", columnList = "email") })
 public class User implements Serializable {
 
 	private static final long serialVersionUID = 8972684400155836411L;
@@ -57,23 +56,23 @@ public class User implements Serializable {
 	@Column(name = "date_validation")
 	private Date dateValidation;
 
-	@NotNull
+	@NotEmpty
 	@Column(name = "display_name")
 	private String displayName;
 
-	@NotNull
+	@NotEmpty
 	private String email;
 
 	@Column(name = "failed_attempts")
 	private Integer failedAttempts;
 
-	@NotNull
+	@NotEmpty
 	private String name;
 
-	@NotNull
+	@NotEmpty
 	private String password;
 
-	@NotNull
+	@NotEmpty
 	private String username;
 
 	private Boolean validated;

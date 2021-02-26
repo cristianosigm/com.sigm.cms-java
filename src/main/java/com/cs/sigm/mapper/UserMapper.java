@@ -33,24 +33,24 @@ public class UserMapper {
 		// @formatter:on
 	}
 
-	public UserDTO map(User request) {
+	public UserDTO map(User response) {
 		// @formatter:off
 		return UserDTO.builder()
-			.id(request.getId())
-			.approved(request.getApproved())
-			.blocked(request.getBlocked())
-			.dateApproval(request.getDateApproval())
-			.dateBlocked(request.getDateBlocked())
-			.dateLastLogin(request.getDateLastLogin())
-			.dateValidation(request.getDateValidation())
-			.displayName(request.getDisplayName())
-			.email(request.getEmail())
-			.failedAttempts(request.getFailedAttempts())
-			.idRole(request.getIdRole())
-			.name(request.getName())
-			.password(request.getPassword())
-			.username(request.getUsername())
-			.validated(request.getValidated())
+			.id(response.getId())
+			.approved(response.getApproved())
+			.blocked(response.getBlocked())
+			.dateApproval(response.getDateApproval())
+			.dateBlocked(response.getDateBlocked())
+			.dateLastLogin(response.getDateLastLogin())
+			.dateValidation(response.getDateValidation())
+			.displayName(response.getDisplayName())
+			.email(response.getEmail())
+			.failedAttempts(response.getFailedAttempts())
+			.idRole(response.getIdRole())
+			.name(response.getName())
+			.password(response.getPassword())
+			.username(response.getUsername())
+			.validated(response.getValidated())
 			.build();
 		// @formatter:on
 	}
