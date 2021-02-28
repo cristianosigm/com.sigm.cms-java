@@ -26,55 +26,57 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "tbl_user", indexes = { @Index(name = "idx_user_username", columnList = "username"),
-		@Index(name = "idx_user_email", columnList = "email") })
+@Table(name = "tbl_user", indexes = {
+	@Index(name = "idx_user_username", columnList = "username", unique = true), 
+	@Index(name = "idx_user_email", columnList = "email", unique = true)
+})
 public class User implements Serializable {
-
+	
 	private static final long serialVersionUID = 8972684400155836411L;
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
+	
 	@NotNull
 	@Column(name = "id_role")
 	private Long idRole;
-
+	
 	private Boolean approved;
-
+	
 	private Boolean blocked;
-
+	
 	@Column(name = "date_approval")
 	private Date dateApproval;
-
+	
 	@Column(name = "date_blocked")
 	private Date dateBlocked;
-
+	
 	@Column(name = "date_last_login")
 	private Date dateLastLogin;
-
+	
 	@Column(name = "date_validation")
 	private Date dateValidation;
-
+	
 	@NotEmpty
 	@Column(name = "display_name")
 	private String displayName;
-
+	
 	@NotEmpty
 	private String email;
-
+	
 	@Column(name = "failed_attempts")
 	private Integer failedAttempts;
-
+	
 	@NotEmpty
 	private String name;
-
+	
 	@NotEmpty
 	private String password;
-
+	
 	@NotEmpty
 	private String username;
-
+	
 	private Boolean validated;
-
+	
 }

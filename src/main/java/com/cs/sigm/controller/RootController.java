@@ -22,7 +22,7 @@ public class RootController {
 		
 		log.info("Log path: " + CmsConfig.LOGGING_FILE_PATH);
 		
-		return "Marketing Portal API - version: ".concat(config.getVersion());
+		return "SIGM CMS API - version: ".concat(config.getVersion());
 	}
 
 }

@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "cms.version",
+    "type": "java.lang.String",
+    "description": "Current version of the CMS Backend."
+  },
+  {
+    "name": "cms.production",
+    "type": "java.lang.String",
+    "description": "True in the Yml file for Production, False for all others."
+  }
+]}

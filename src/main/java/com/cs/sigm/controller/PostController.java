@@ -14,52 +14,36 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cs.sigm.adapter.domain.UserDTO;
+import com.cs.sigm.adapter.domain.PostDTO;
 import com.cs.sigm.config.CmsConfig;
-import com.cs.sigm.domain.fixed.Operation;
 import com.cs.sigm.exception.EntryNotFoundException;
-import com.cs.sigm.mapper.UserMapper;
-import com.cs.sigm.service.UserService;
+import com.cs.sigm.mapper.PostMapper;
+import com.cs.sigm.service.PostService;
 
 @RestController
-@RequestMapping(value = "/user")
-public class UserController {
+@RequestMapping(value = "/post")
+public class PostController {
 	
 	@Autowired
-	private UserService service;
+	private PostService service;
 	
 	@Autowired
-	private UserMapper mapper;
+	private PostMapper mapper;
 	
 	@GetMapping
-	public List<UserDTO> findAll() {
+	public List<PostDTO> findAll() {
 		return mapper.mapResponse(service.findAll());
 	}
 	
 	@GetMapping("/single/{id}")
-	public UserDTO findSingle(@PathVariable Long id) {
+	public PostDTO findSingle(@PathVariable Long id) {
 		// TODO: translate this message
 		return mapper.map(service.findSingle(id).orElseThrow(() -> new EntryNotFoundException("Not found")));
 	}
 	
-	@PostMapping("/signup")
-	public ResponseEntity<String> signup(@Valid @RequestBody UserDTO request) {
-		// TODO: set the admin user which performed the action.
-		service.save(mapper.map(request), Operation.SIGNUP, 1L);
-		return new ResponseEntity<>(CmsConfig.RESPONSE_SUCCESS, HttpStatus.OK);
-	}
-	
-	@PostMapping("/update")
-	public ResponseEntity<String> update(@Valid @RequestBody UserDTO request) {
-		// TODO: set the admin user which performed the action.
-		service.save(mapper.map(request), Operation.UPDATE, 1L);
-		return new ResponseEntity<>(CmsConfig.RESPONSE_SUCCESS, HttpStatus.OK);
-	}
-	
 	@PostMapping
-	public ResponseEntity<String> create(@Valid @RequestBody UserDTO request) {
-		// TODO: set the admin user which performed the action.
-		service.save(mapper.map(request), Operation.CREATE, 1L);
+	public ResponseEntity<String> save(@Valid @RequestBody PostDTO request) {
+		service.save(mapper.map(request));
 		return new ResponseEntity<>(CmsConfig.RESPONSE_SUCCESS, HttpStatus.OK);
 	}
 	

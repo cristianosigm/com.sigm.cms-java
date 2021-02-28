@@ -24,29 +24,32 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "tbl_user_log", indexes = { @Index(name = "idx_user_log_id_user", columnList = "id_user") })
+@Table(name = "tbl_user_log", indexes = {
+	@Index(name = "idx_user_log_id_user", columnList = "id_user")
+})
 public class UserLog {
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
+	
 	@NotNull
 	@Column(name = "id_operation")
 	private Long idOperation;
-
+	
 	@NotNull
 	@Column(name = "id_operator")
 	private Long idOperator;
-
+	
 	@NotNull
 	@Column(name = "id_user")
 	private Long idUser;
-
+	
 	@NotNull
 	@Column(name = "date_operation")
-	private Date dateOperation;
-
+	@Builder.Default
+	private Date dateOperation = new Date();
+	
 	private String notes;
-
+	
 }
