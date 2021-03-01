@@ -22,11 +22,11 @@ public class UserLogDTO implements Serializable {
 
 	private Long id;
 
-	private Long idOperation;
+	private String operation;
 
-	private Long idOperator;
+	private String operator;
 
-	private Long idUser;
+	private String user;
 
 	private Date dateOperation;
 

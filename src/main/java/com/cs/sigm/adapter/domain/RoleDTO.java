@@ -2,8 +2,6 @@ package com.cs.sigm.adapter.domain;
 
 import java.io.Serializable;
 
-import javax.validation.constraints.NotEmpty;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,9 +21,6 @@ public class RoleDTO implements Serializable {
 
 	private Long id;
 
-	@NotEmpty(message = "{validation.role.title}")
 	private String title;
-
-	private String description;
 
 }

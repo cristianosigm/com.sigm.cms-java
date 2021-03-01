@@ -15,16 +15,16 @@ import com.cs.sigm.service.UserLogService;
 @RestController
 @RequestMapping(value = "/user-log")
 public class UserLogController {
-	
+
 	@Autowired
 	private UserLogService service;
-	
+
 	@Autowired
 	private UserLogMapper mapper;
-	
+
 	@GetMapping("/{idUser}")
 	public List<UserLogDTO> findAllByIdUser(@PathVariable Long idUser) {
 		return mapper.mapResponse(service.findAllByUserId(idUser));
 	}
-	
+
 }
