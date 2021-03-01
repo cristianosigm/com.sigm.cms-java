@@ -10,20 +10,16 @@ import com.cs.sigm.repository.UserLogRepository;
 
 @Service
 public class UserLogService {
-	
+
 	@Autowired
 	private UserLogRepository repository;
-	
+
 	public List<UserLog> findAllByUserId(Long idUser) {
 		return repository.findByIdUser(idUser);
 	}
-	
+
 	public UserLog save(UserLog request) {
 		return repository.save(request);
 	}
-	
-	public Integer deleteByIdUser(Long idUser) {
-		return repository.deleteByIdUser(idUser);
-	}
-	
+
 }

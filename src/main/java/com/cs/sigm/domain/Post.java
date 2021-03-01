@@ -28,12 +28,13 @@ public class Post {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@NotEmpty
 	@Column(name = "id_picture")
 	private Long idPicture;
 
+	@NotEmpty(message = "{validation.post.title}")
 	private String title;
 
+	@NotEmpty(message = "{validation.post.content}")
 	private String content;
 
 }
