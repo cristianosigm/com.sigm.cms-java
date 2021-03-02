@@ -5,15 +5,15 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.cs.sigm.adapter.domain.PostDTO;
-import com.cs.sigm.domain.Post;
+import com.cs.sigm.adapter.domain.ContentDTO;
+import com.cs.sigm.domain.Content;
 
 @Service
-public class PostMapper {
+public class ContentMapper {
 
-	public Post map(PostDTO request) {
+	public Content map(ContentDTO request) {
 		// @formatter:off
-		return Post.builder()
+		return Content.builder()
 			.id(request.getId())
 			.idPicture(request.getIdPicture())
 			.content(request.getContent())
@@ -22,9 +22,9 @@ public class PostMapper {
 		// @formatter:on
 	}
 
-	public PostDTO map(Post response) {
+	public ContentDTO map(Content response) {
 		// @formatter:off
-		return PostDTO.builder()
+		return ContentDTO.builder()
 			.id(response.getId())
 			.idPicture(response.getIdPicture())
 			.content(response.getContent())
@@ -33,17 +33,17 @@ public class PostMapper {
 		// @formatter:on
 	}
 
-	public List<Post> mapRequest(List<PostDTO> lst) {
-		List<Post> response = new ArrayList<>();
-		for (PostDTO cur : lst) {
+	public List<Content> mapRequest(List<ContentDTO> lst) {
+		List<Content> response = new ArrayList<>();
+		for (ContentDTO cur : lst) {
 			response.add(map(cur));
 		}
 		return response;
 	}
 
-	public List<PostDTO> mapResponse(List<Post> lst) {
-		List<PostDTO> response = new ArrayList<>();
-		for (Post cur : lst) {
+	public List<ContentDTO> mapResponse(List<Content> lst) {
+		List<ContentDTO> response = new ArrayList<>();
+		for (Content cur : lst) {
 			response.add(map(cur));
 		}
 		return response;

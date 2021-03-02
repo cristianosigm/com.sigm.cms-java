@@ -6,25 +6,25 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cs.sigm.domain.Post;
+import com.cs.sigm.domain.Content;
 import com.cs.sigm.exception.EntryNotFoundException;
-import com.cs.sigm.repository.PostRepository;
+import com.cs.sigm.repository.ContentRepository;
 
 @Service
-public class PostService {
+public class ContentService {
 	
 	@Autowired
-	private PostRepository repository;
+	private ContentRepository repository;
 	
-	public Optional<Post> findSingle(Long id) {
+	public Optional<Content> findSingle(Long id) {
 		return repository.findById(id);
 	}
 	
-	public List<Post> findAll() {
+	public List<Content> findAll() {
 		return repository.findAll();
 	}
 	
-	public Post save(Post request) {
+	public Content save(Content request) {
 		return repository.save(request);
 	}
 	

@@ -22,7 +22,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @Table(name = "tbl_post", indexes = { @Index(name = "idx_post_title", columnList = "title") })
-public class Post {
+public class Content {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

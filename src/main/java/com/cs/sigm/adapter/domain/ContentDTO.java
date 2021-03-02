@@ -17,7 +17,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PostDTO implements Serializable {
+public class ContentDTO implements Serializable {
 
 	private static final long serialVersionUID = 7531807705318187551L;
 

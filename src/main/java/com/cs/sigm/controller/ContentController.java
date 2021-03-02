@@ -14,35 +14,35 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cs.sigm.adapter.domain.PostDTO;
+import com.cs.sigm.adapter.domain.ContentDTO;
 import com.cs.sigm.config.CmsConfig;
 import com.cs.sigm.exception.EntryNotFoundException;
-import com.cs.sigm.mapper.PostMapper;
-import com.cs.sigm.service.PostService;
+import com.cs.sigm.mapper.ContentMapper;
+import com.cs.sigm.service.ContentService;
 
 @RestController
-@RequestMapping(value = "/post")
-public class PostController {
+@RequestMapping(value = "/content")
+public class ContentController {
 	
 	@Autowired
-	private PostService service;
+	private ContentService service;
 	
 	@Autowired
-	private PostMapper mapper;
+	private ContentMapper mapper;
 	
 	@GetMapping
-	public List<PostDTO> findAll() {
+	public List<ContentDTO> findAll() {
 		return mapper.mapResponse(service.findAll());
 	}
 	
 	@GetMapping("/single/{id}")
-	public PostDTO findSingle(@PathVariable Long id) {
+	public ContentDTO findSingle(@PathVariable Long id) {
 		// TODO: translate this message
 		return mapper.map(service.findSingle(id).orElseThrow(() -> new EntryNotFoundException("Not found")));
 	}
 	
 	@PostMapping
-	public ResponseEntity<String> save(@Valid @RequestBody PostDTO request) {
+	public ResponseEntity<String> save(@Valid @RequestBody ContentDTO request) {
 		service.save(mapper.map(request));
 		return new ResponseEntity<>(CmsConfig.RESPONSE_SUCCESS, HttpStatus.OK);
 	}
