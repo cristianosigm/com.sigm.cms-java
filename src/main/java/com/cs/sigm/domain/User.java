@@ -46,17 +46,22 @@ public class User implements Serializable {
 	
 	private Boolean blocked;
 	
+	/*
 	@Column(name = "date_approval")
 	private Date dateApproval;
 	
 	@Column(name = "date_blocked")
 	private Date dateBlocked;
 	
+	@Column(name = "date_creation")
+	private Date dateCreation;
+	
 	@Column(name = "date_last_login")
 	private Date dateLastLogin;
 	
 	@Column(name = "date_validation")
 	private Date dateValidation;
+	*/
 	
 	@NotEmpty
 	@Column(name = "display_name")

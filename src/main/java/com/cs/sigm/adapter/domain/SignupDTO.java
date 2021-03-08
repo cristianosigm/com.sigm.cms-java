@@ -20,9 +20,7 @@ import lombok.Setter;
 public class SignupDTO implements Serializable {
 	
 	private static final long serialVersionUID = -7322841407061814638L;
-	
-	private Long id;
-	
+		
 	@NotEmpty(message = "{validation.user.display_name}")
 	private String displayName;
 	

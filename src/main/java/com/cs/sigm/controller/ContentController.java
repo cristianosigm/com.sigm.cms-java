@@ -23,34 +23,34 @@ import com.cs.sigm.service.ContentService;
 @RestController
 @RequestMapping(value = "/content")
 public class ContentController {
-	
+
 	@Autowired
 	private ContentService service;
-	
+
 	@Autowired
 	private ContentMapper mapper;
-	
-	@GetMapping
+
+	@GetMapping("/public")
 	public List<ContentDTO> findAll() {
 		return mapper.mapResponse(service.findAll());
 	}
-	
+
 	@GetMapping("/single/{id}")
 	public ContentDTO findSingle(@PathVariable Long id) {
 		// TODO: translate this message
 		return mapper.map(service.findSingle(id).orElseThrow(() -> new EntryNotFoundException("Not found")));
 	}
-	
+
 	@PostMapping
 	public ResponseEntity<String> save(@Valid @RequestBody ContentDTO request) {
 		service.save(mapper.map(request));
 		return new ResponseEntity<>(CmsConfig.RESPONSE_SUCCESS, HttpStatus.OK);
 	}
-	
+
 	@PostMapping("/delete/{id}")
 	public ResponseEntity<String> delete(@PathVariable Long id) {
 		service.deleteSingle(id);
 		return new ResponseEntity<>(CmsConfig.RESPONSE_SUCCESS, HttpStatus.OK);
 	}
-	
+
 }

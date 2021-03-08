@@ -1,7 +1,6 @@
 package com.cs.sigm.adapter.domain;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -31,14 +30,6 @@ public class UserDTO implements Serializable {
 	private Boolean approved;
 
 	private Boolean blocked;
-
-	private Date dateApproval;
-
-	private Date dateBlocked;
-
-	private Date dateLastLogin;
-
-	private Date dateValidation;
 
 	@NotEmpty(message = "{validation.user.display_name}")
 	private String displayName;

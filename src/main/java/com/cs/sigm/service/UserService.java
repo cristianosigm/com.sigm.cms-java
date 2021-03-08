@@ -13,6 +13,9 @@ import com.cs.sigm.exception.EntryNotFoundException;
 import com.cs.sigm.repository.UserLogRepository;
 import com.cs.sigm.repository.UserRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class UserService {
 
@@ -47,6 +50,16 @@ public class UserService {
 
 	public String getNameById(Long id) {
 		return repository.getNameById(id);
+	}
+
+	public boolean requestPwreset(String email) {
+		final User user = repository.findByEmail(email).orElse(null);
+		if (user == null) {
+			return false;
+		}
+		log.info("User found! Generating password reset flow and sending via email.");
+		// TODO: send password reset message
+		return true;
 	}
 
 }
