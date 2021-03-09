@@ -7,16 +7,14 @@ import org.springframework.stereotype.Service;
 
 import com.cs.sigm.adapter.domain.UserDTO;
 import com.cs.sigm.domain.User;
-import com.cs.sigm.domain.fixed.Role;
 
 @Service
-public class UserMapper {
+public class UserCredentialMapper {
 
 	public User map(UserDTO request) {
 		// @formatter:off
 		return User.builder()
 			.id(request.getId())
-			.idRole(request.getIdRole())
 			.approved(request.getApproved())
 			.blocked(request.getBlocked())
 			.displayName(request.getDisplayName())
@@ -24,8 +22,6 @@ public class UserMapper {
 			.failedAttempts(request.getFailedAttempts())
 			.name(request.getName())
 			.validated(request.getValidated())
-			.username(request.getUsername())
-			.password(request.getPassword())
 			.build();
 		// @formatter:on
 	}
@@ -34,8 +30,6 @@ public class UserMapper {
 		// @formatter:off
 		return UserDTO.builder()
 			.id(response.getId())
-			.idRole(response.getIdRole())
-			.roleName(Role.getKeyById(response.getIdRole()))
 			.approved(response.getApproved())
 			.blocked(response.getBlocked())
 			.displayName(response.getDisplayName())
@@ -43,8 +37,6 @@ public class UserMapper {
 			.failedAttempts(response.getFailedAttempts())
 			.name(response.getName())
 			.validated(response.getValidated())
-			.username(response.getUsername())
-			.password(response.getPassword())
 			.build();
 		// @formatter:on
 	}

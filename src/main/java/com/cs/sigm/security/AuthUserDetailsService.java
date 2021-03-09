@@ -31,6 +31,7 @@ public class AuthUserDetailsService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(final String email) {
+		// TODO: translate the messages
 		final com.cs.sigm.domain.User user = userRepository.findByEmail(email)
 				.orElseThrow(() -> new AuthenticationException("Usuário ou senha inválidos."));
 

@@ -9,8 +9,8 @@ import com.cs.sigm.domain.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-	@Query("select u.name from User u where u.id=:id")
-	public String getNameById(Long id);
+	@Query("select u.name from User u where u.id = :idUser")
+	public String getNameById(final Long idUser);
 
-	public Optional<User> findByEmail(String email);
+	public Optional<User> findByEmail(final String email);
 }

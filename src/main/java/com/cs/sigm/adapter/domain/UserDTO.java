@@ -43,6 +43,8 @@ public class UserDTO implements Serializable {
 	private String name;
 
 	private String password;
+	
+	private String roleName;
 
 	@NotEmpty(message = "{validation.user.username}")
 	private String username;

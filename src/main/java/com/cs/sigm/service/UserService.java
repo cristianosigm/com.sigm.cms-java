@@ -19,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class UserService {
 
+//	private final PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+
 	@Autowired
 	private UserRepository repository;
 

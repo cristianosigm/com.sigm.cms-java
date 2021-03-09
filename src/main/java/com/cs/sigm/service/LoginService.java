@@ -23,6 +23,7 @@ public class LoginService {
 
 	public User checkLogin(final LoginDTO request) {
 		final UserDetails user = authUserDetailsService.loadUserByUsername(request.getUsername());
+		// TODO: translate the messages
 		if (user.getPassword().equals(request.getPassword())) {
 			// user and password OK
 			return repository.findByEmail(user.getUsername())
