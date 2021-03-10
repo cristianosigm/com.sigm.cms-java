@@ -12,9 +12,6 @@ import com.cs.sigm.exception.AuthenticationException;
 import com.cs.sigm.repository.UserRepository;
 import com.cs.sigm.security.AuthUserDetailsService;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Service
 @Transactional
 public class LoginService {
@@ -30,7 +27,6 @@ public class LoginService {
 
 	public User checkLogin(final LoginDTO request) {
 		final UserDetails user = authUserDetailsService.loadUserByUsername(request.getUsername());
-		// TODO: translate the messages
 		if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
 			// user and password OK
 			return repository.findByEmail(user.getUsername())

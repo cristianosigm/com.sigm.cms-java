@@ -22,7 +22,7 @@ public class RoleController {
 				.collect(Collectors.toList());
 	}
 
-	@GetMapping("/single/{id}")
+	@GetMapping("/{id}")
 	public RoleDTO findSingle(@PathVariable Long id) {
 		final Role result = Arrays.asList(Role.values()).stream().filter(r -> r.getId() == id).findFirst().orElse(null);
 		return (RoleDTO.builder().id(result.getId()).title(result.getKey()).build());

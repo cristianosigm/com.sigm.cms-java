@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -18,9 +19,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import com.cs.sigm.domain.fixed.Role;
 
 @Configuration
 @EnableWebSecurity
@@ -85,15 +89,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.cors()
 			.and()
 			.authorizeRequests()
+				// public endpoints
+				.antMatchers("/").permitAll()
 				.antMatchers("/login").permitAll()
 				.antMatchers("/user/signup").permitAll()
 				.antMatchers("/user/reset/*").permitAll()
-				.antMatchers("/content/public").permitAll()
+				.antMatchers(HttpMethod.GET, "/content").permitAll()
+				.antMatchers(HttpMethod.GET, "/content/*").permitAll()
+				// admin only endpoints
+				.antMatchers(HttpMethod.POST, "/user").hasAuthority(Role.ADMINISTRATOR.getKey())
+				.antMatchers(HttpMethod.POST, "/user/delete/*").hasAuthority(Role.ADMINISTRATOR.getKey())
+				// all others (authenticated with any role)
 				.anyRequest().authenticated()
 			.and()
 				.httpBasic()
 			.and()
 				.logout()
+				.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+				.invalidateHttpSession(true)
+				.deleteCookies("JSESSIONID")
 			;
 		//@formatter:on
 	}

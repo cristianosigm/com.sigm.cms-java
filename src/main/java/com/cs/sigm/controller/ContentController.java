@@ -30,12 +30,12 @@ public class ContentController {
 	@Autowired
 	private ContentMapper mapper;
 
-	@GetMapping("/public")
+	@GetMapping
 	public List<ContentDTO> findAll() {
 		return mapper.mapResponse(service.findAll());
 	}
 
-	@GetMapping("/single/{id}")
+	@GetMapping("/{id}")
 	public ContentDTO findSingle(@PathVariable Long id) {
 		// TODO: translate this message
 		return mapper.map(service.findSingle(id).orElseThrow(() -> new EntryNotFoundException("Not found")));

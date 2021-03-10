@@ -44,7 +44,7 @@ public class UserMapper {
 			.name(response.getName())
 			.validated(response.getValidated())
 			.username(response.getUsername())
-			.password(response.getPassword())
+			// .password(response.getPassword())
 			.build();
 		// @formatter:on
 	}

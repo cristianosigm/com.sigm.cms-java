@@ -11,7 +11,7 @@ public interface UserLogRepository extends JpaRepository<UserLog, Long> {
 	
 	public List<UserLog> findByIdUser(Long idUser);
 	
-	@Query("delete from UserLog ul where ul.idUser=:idUser")
+	@Query("delete from UserLog ul where ul.idUser = :idUser")
 	public Integer deleteByIdUser(Long idUser);
 	
 }

@@ -39,7 +39,6 @@ public class UserService {
 
 	public User save(User request, Operation operation, Long idOperator) {
 		if (request.getId() != null) {
-			// updating
 			log.info(" >> Updating an existing user...");
 			final User curUser = repository.findById(request.getId())
 					.orElseThrow(() -> new EntryNotFoundException("Tried to update an User with an invalid ID."));
@@ -47,9 +46,7 @@ public class UserService {
 			request.setPassword(curUser.getPassword());
 			request.setEmail(curUser.getEmail());
 		} else {
-			// creating new
 			log.info(" >> Creating a new user...");
-			// TODO: encrypt the password
 			request.setPassword(passwordEncoder.encode(request.getPassword()));
 		}
 		final User result = repository.save(request);

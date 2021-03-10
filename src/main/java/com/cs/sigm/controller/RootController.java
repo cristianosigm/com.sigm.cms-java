@@ -19,9 +19,9 @@ public class RootController {
 
 	@GetMapping
 	public String getVersion() {
-		
+
 		log.info("Log path: " + CmsConfig.LOGGING_FILE_PATH);
-		
+
 		return "SIGM CMS API - version: ".concat(config.getVersion());
 	}
 

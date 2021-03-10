@@ -1,11 +1,6 @@
 package com.cs.sigm.security;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,16 +13,10 @@ import com.cs.sigm.repository.UserRepository;
 
 @Service("userDetailsService")
 @Transactional
-public class AuthUserDetailsService implements UserDetailsService {
+public class AuthUserDetailsService extends GrantedAuthoritiesGenerator implements UserDetailsService {
 
 	@Autowired
 	private UserRepository userRepository;
-
-	private List<GrantedAuthority> getGrantedAuthorities(final String roleName) {
-		final List<GrantedAuthority> authorities = new ArrayList<>();
-		authorities.add(new SimpleGrantedAuthority(roleName));
-		return authorities;
-	}
 
 	@Override
 	public UserDetails loadUserByUsername(final String email) {

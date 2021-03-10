@@ -38,7 +38,7 @@ public class UserController {
 		return mapper.mapResponse(service.findAll());
 	}
 
-	@GetMapping("/single/{id}")
+	@GetMapping("/{id}")
 	public UserDTO findSingle(@PathVariable Long id) {
 		// TODO: translate this message
 		return mapper.map(service.findSingle(id).orElseThrow(() -> new EntryNotFoundException("Not found")));
@@ -82,9 +82,20 @@ public class UserController {
 	}
 
 	private UserDTO parse(SignupDTO signup) {
-		return UserDTO.builder().approved(false).blocked(false).displayName(signup.getDisplayName())
-				.email(signup.getEmail()).failedAttempts(0).idRole(Role.STANDARD.getId()).name(signup.getName())
-				.password(signup.getPassword()).username(signup.getUsername()).validated(false).build();
+		//@formatter:off
+		return UserDTO.builder()
+				.approved(false)
+				.blocked(false)
+				.displayName(signup.getDisplayName())
+				.email(signup.getEmail())
+				.failedAttempts(0)
+				.idRole(Role.STANDARD.getId())
+				.name(signup.getName())
+				.password(signup.getPassword())
+				.username(signup.getEmail())
+				.validated(false)
+				.build();
+		//@formatter:on
 	}
 
 }
