@@ -91,9 +91,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.authorizeRequests()
 				// public endpoints
 				.antMatchers("/").permitAll()
-				.antMatchers("/login").permitAll()
-				.antMatchers("/user/signup").permitAll()
-				.antMatchers("/user/reset/*").permitAll()
+				.antMatchers("/account/login").permitAll()
+				.antMatchers("/account/signup").permitAll()
+				.antMatchers("/account/reset/*").permitAll()
 				.antMatchers(HttpMethod.GET, "/content").permitAll()
 				.antMatchers(HttpMethod.GET, "/content/*").permitAll()
 				// admin only endpoints
