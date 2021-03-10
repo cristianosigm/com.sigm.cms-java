@@ -8,13 +8,15 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -29,9 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private UserDetailsService userDetailsService;
 
 	@Autowired
-	public void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService);
-	}
+	private AuthUserDetailsPasswordService userDetailsPasswordService;
 
 	@Bean(name = BeanIds.AUTHENTICATION_MANAGER)
 	@Override
@@ -41,7 +41,40 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
-		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+		return new BCryptPasswordEncoder();
+	}
+
+	@Bean
+	public AuthenticationProvider authProvider() {
+		final DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+		authProvider.setUserDetailsService(userDetailsService);
+		authProvider.setUserDetailsPasswordService(userDetailsPasswordService);
+		authProvider.setPasswordEncoder(passwordEncoder());
+		return authProvider;
+	}
+
+	@Override
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.authenticationProvider(authProvider());
+	}
+
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource(@Autowired CmsConfig config) {
+		final List<String> allowedOriginsDev = Arrays.asList("*");
+
+		// TODO: list here the allowed sources before put in prod
+		final List<String> allowedOriginsProd = Arrays.asList("http://localhost:4200");
+
+		CorsConfiguration configuration = new CorsConfiguration();
+		configuration.setAllowedOrigins(config.getProduction() ? allowedOriginsDev : allowedOriginsProd);
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
+		configuration.setAllowedHeaders(Arrays.asList("*"));
+		configuration.setAllowCredentials(true);
+		configuration.setMaxAge(3600L);
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
 	}
 
 	@Override
@@ -63,29 +96,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.logout()
 			;
 		//@formatter:on
-	}
-
-	@Bean
-	public CorsConfigurationSource corsConfigurationSource(@Autowired CmsConfig config) {
-		final List<String> allowedOriginsDev = Arrays.asList("*");
-
-		//@formatter:off
-		// TODO: list here the allowed sources before put in prod
-		final List<String> allowedOriginsProd = Arrays.asList(
-			"http://localhost:4200"
-		);
-		//@formatter:on
-
-		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(config.getProduction() ? allowedOriginsDev : allowedOriginsProd);
-		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
-		configuration.setAllowedHeaders(Arrays.asList("*"));
-		configuration.setAllowCredentials(true);
-		configuration.setMaxAge(3600L);
-
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", configuration);
-		return source;
 	}
 
 }

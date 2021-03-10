@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.cs.sigm.domain.User;
@@ -19,7 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class UserService {
 
-//	private final PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@Autowired
 	private UserRepository repository;
@@ -36,6 +38,20 @@ public class UserService {
 	}
 
 	public User save(User request, Operation operation, Long idOperator) {
+		if (request.getId() != null) {
+			// updating
+			log.info(" >> Updating an existing user...");
+			final User curUser = repository.findById(request.getId())
+					.orElseThrow(() -> new EntryNotFoundException("Tried to update an User with an invalid ID."));
+			request.setUsername(curUser.getUsername());
+			request.setPassword(curUser.getPassword());
+			request.setEmail(curUser.getEmail());
+		} else {
+			// creating new
+			log.info(" >> Creating a new user...");
+			// TODO: encrypt the password
+			request.setPassword(passwordEncoder.encode(request.getPassword()));
+		}
 		final User result = repository.save(request);
 		logRepository.save(
 				UserLog.builder().idOperation(operation.getId()).idOperator(idOperator).idUser(result.getId()).build());
