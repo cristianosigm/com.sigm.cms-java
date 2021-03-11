@@ -24,7 +24,7 @@ public class UserMapper {
 			.failedAttempts(request.getFailedAttempts())
 			.name(request.getName())
 			.validated(request.getValidated())
-			.username(request.getUsername())
+			.username((request.getUsername() == null || request.getUsername().isBlank()) ? request.getEmail() : request.getUsername())
 			.password(request.getPassword())
 			.build();
 		// @formatter:on

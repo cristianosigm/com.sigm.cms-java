@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +22,7 @@ import com.cs.sigm.mapper.ContentMapper;
 import com.cs.sigm.service.ContentService;
 
 @RestController
-@RequestMapping(value = "/content")
+@RequestMapping(value = "/contents")
 public class ContentController {
 
 	@Autowired
@@ -30,12 +31,12 @@ public class ContentController {
 	@Autowired
 	private ContentMapper mapper;
 
-	@GetMapping
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<ContentDTO> findAll() {
 		return mapper.mapResponse(service.findAll());
 	}
 
-	@GetMapping("/{id}")
+	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ContentDTO findSingle(@PathVariable Long id) {
 		// TODO: translate this message
 		return mapper.map(service.findSingle(id).orElseThrow(() -> new EntryNotFoundException("Not found")));

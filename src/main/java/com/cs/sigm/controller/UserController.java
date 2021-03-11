@@ -22,7 +22,7 @@ import com.cs.sigm.mapper.UserMapper;
 import com.cs.sigm.service.UserService;
 
 @RestController
-@RequestMapping(value = "/user")
+@RequestMapping(value = "/users")
 public class UserController {
 
 	@Autowired

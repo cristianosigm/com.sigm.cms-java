@@ -5,7 +5,7 @@ logging:
   level:
     root: info
     web: info
-    org.springframework.web: info
+    org.springframework.web: debug
     com.cs.sigm: info
 server:
   forward-headers-strategy: framework

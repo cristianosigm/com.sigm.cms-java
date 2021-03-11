@@ -13,7 +13,7 @@ import com.cs.sigm.mapper.UserLogMapper;
 import com.cs.sigm.service.UserLogService;
 
 @RestController
-@RequestMapping(value = "/userlog")
+@RequestMapping(value = "/userlogs")
 public class UserLogController {
 
 	@Autowired

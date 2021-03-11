@@ -28,7 +28,7 @@ import com.cs.sigm.service.UserService;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
-@RequestMapping(value = "/account", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AccountController {
 
 	@Autowired

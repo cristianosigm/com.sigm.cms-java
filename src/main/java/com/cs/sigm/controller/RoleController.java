@@ -13,7 +13,7 @@ import com.cs.sigm.adapter.domain.RoleDTO;
 import com.cs.sigm.domain.fixed.Role;
 
 @RestController
-@RequestMapping(value = "/role")
+@RequestMapping(value = "/roles")
 public class RoleController {
 
 	@GetMapping
