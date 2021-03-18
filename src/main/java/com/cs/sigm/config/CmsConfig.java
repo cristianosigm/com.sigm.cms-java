@@ -25,4 +25,22 @@ public class CmsConfig {
 
 	private Boolean production;
 
+	private int keySize;
+
+	private boolean mailAuth;
+
+	private boolean mailTLSEnabled;
+
+	private String mailUsername;
+
+	private String mailPassword;
+
+	private String mailHost;
+
+	private String mailPort;
+
+	private String mailFrom;
+
+	private String validationBaseURL;
+
 }

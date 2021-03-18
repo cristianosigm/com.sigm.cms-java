@@ -1,7 +1,7 @@
 /**
  * File created at 4 de jul de 2019 14:55:15 by Cristiano Souza
  */
-package com.cs.sigm.security;
+package com.cs.sigm.security.auth;
 
 import java.util.Collection;
 

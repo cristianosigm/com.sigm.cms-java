@@ -39,4 +39,12 @@ spring:
 cms:
   version: 0.0.1 alpha
   production: false
-   
+  keySize: 20
+  mailAuth: false
+  mailTLSEnabled: false
+  mailUsername: test@gmail.com
+  mailPassword: test
+  mailHost: localhost
+  mailPort: 2525
+  mailFrom: development@gmail.com
+  validationBaseURL: http://localhost:8081/cms/accounts/validation

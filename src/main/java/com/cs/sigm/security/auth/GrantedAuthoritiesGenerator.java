@@ -1,4 +1,4 @@
-package com.cs.sigm.security;
+package com.cs.sigm.security.auth;
 
 import java.util.ArrayList;
 import java.util.List;

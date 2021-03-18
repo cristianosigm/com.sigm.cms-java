@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import com.cs.sigm.domain.User;
 import com.cs.sigm.domain.fixed.Role;
 import com.cs.sigm.repository.UserRepository;
-import com.cs.sigm.security.GrantedAuthoritiesGenerator;
+import com.cs.sigm.security.auth.GrantedAuthoritiesGenerator;
 
 @Service
 @Transactional

@@ -10,7 +10,7 @@ import com.cs.sigm.adapter.domain.LoginDTO;
 import com.cs.sigm.domain.User;
 import com.cs.sigm.exception.AuthenticationException;
 import com.cs.sigm.repository.UserRepository;
-import com.cs.sigm.security.AuthUserDetailsService;
+import com.cs.sigm.security.auth.AuthUserDetailsService;
 
 @Service
 @Transactional

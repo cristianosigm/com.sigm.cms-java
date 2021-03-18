@@ -53,6 +53,9 @@ public class User {
 	@Column(name = "display_name")
 	private String displayName;
 
+	@NotEmpty
+	private String validationKey;
+
 	private Boolean approved;
 
 	private Boolean blocked;
