@@ -8,32 +8,37 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cs.sigm.adapter.domain.LoginDTO;
 import com.cs.sigm.domain.User;
-import com.cs.sigm.exception.AuthenticationException;
+import com.cs.sigm.exception.CmsAuthenticationException;
 import com.cs.sigm.repository.UserRepository;
 import com.cs.sigm.security.auth.AuthUserDetailsService;
 
 @Service
 @Transactional
 public class LoginService {
-
+	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-
+	
 	@Autowired
 	private AuthUserDetailsService authUserDetailsService;
-
+	
 	@Autowired
 	private UserRepository repository;
-
+	
 	public User checkLogin(final LoginDTO request) {
-		final UserDetails user = authUserDetailsService.loadUserByUsername(request.getUsername());
-		if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+		final UserDetails userDetails = authUserDetailsService.loadUserByUsername(request.getUsername());
+		if (passwordEncoder.matches(request.getPassword(), userDetails.getPassword())) {
+			// TODO: translate the messages
 			// user and password OK
-			return repository.findByEmail(user.getUsername())
-					.orElseThrow(() -> new AuthenticationException("User or password invalid...."));
+			final User user = repository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new CmsAuthenticationException("User or password invalid...."));
+			if (!user.getValidated()) {
+				// user has not yet a valid email
+				throw new CmsAuthenticationException("Please validate your email before using the portal.");
+			}
+			return user;
 		} else {
-			throw new AuthenticationException("User or password invalid....");
+			throw new CmsAuthenticationException("User or password invalid....");
 		}
 	}
-
+	
 }

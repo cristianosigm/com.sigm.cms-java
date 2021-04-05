@@ -4,27 +4,27 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
-public class EntryNotFoundException extends RuntimeException {
+public class CmsEntryNotFoundException extends RuntimeException {
 
 	private static final long serialVersionUID = 3707678340062548307L;
 
-	public EntryNotFoundException() {
+	public CmsEntryNotFoundException() {
 		super();
 	}
 
-	public EntryNotFoundException(String message) {
+	public CmsEntryNotFoundException(String message) {
 		super(message);
 	}
 
-	public EntryNotFoundException(Throwable cause) {
+	public CmsEntryNotFoundException(Throwable cause) {
 		super(cause);
 	}
 
-	public EntryNotFoundException(String message, Throwable cause) {
+	public CmsEntryNotFoundException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
-	public EntryNotFoundException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+	public CmsEntryNotFoundException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 	}
 

@@ -94,6 +94,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/accounts/login").permitAll()
 				.antMatchers("/accounts/signup").permitAll()
 				.antMatchers("/accounts/reset/*").permitAll()
+				.antMatchers("/accounts/validate/**").permitAll()
 				.antMatchers(HttpMethod.GET, "/contents").permitAll()
 				.antMatchers(HttpMethod.GET, "/contents/*").permitAll()
 				// admin only endpoints
@@ -105,7 +106,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.httpBasic()
 			.and()
 				.logout()
-				.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+				.logoutRequestMatcher(new AntPathRequestMatcher("/accounts/logout"))
 				.invalidateHttpSession(true)
 				.deleteCookies("JSESSIONID")
 			;

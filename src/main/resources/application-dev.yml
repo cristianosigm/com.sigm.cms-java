@@ -54,4 +54,10 @@ cms:
   mailHost: localhost
   mailPort: 2525
   mailFrom: development@gmail.com
-  validationBaseURL: http://localhost:8081/cms/accounts/validation
+  accountsBaseURL: http://localhost:8081/cms/accounts
+  pwMinSize: 3
+  pwMaxSize: 15
+  pwLowercaseRequired: true
+  pwUppercaseRequired: false
+  pwNumericRequired: true
+  pwSpecialRequired: false

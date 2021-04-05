@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cs.sigm.adapter.domain.ContentDTO;
 import com.cs.sigm.config.CmsConfig;
-import com.cs.sigm.exception.EntryNotFoundException;
+import com.cs.sigm.exception.CmsEntryNotFoundException;
 import com.cs.sigm.mapper.ContentMapper;
 import com.cs.sigm.service.ContentService;
 
@@ -39,7 +39,7 @@ public class ContentController {
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ContentDTO findSingle(@PathVariable Long id) {
 		// TODO: translate this message
-		return mapper.map(service.findSingle(id).orElseThrow(() -> new EntryNotFoundException("Not found")));
+		return mapper.map(service.findSingle(id).orElseThrow(() -> new CmsEntryNotFoundException("Not found")));
 	}
 
 	@PostMapping

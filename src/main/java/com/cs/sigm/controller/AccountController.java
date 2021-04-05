@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,16 +31,16 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping(value = "/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AccountController {
-
+	
 	@Autowired
 	private UserService service;
-
+	
 	@Autowired
 	private LoginService loginService;
-
+	
 	@Autowired
 	private UserMapper mapper;
-
+	
 	@ApiOperation(code = 200, value = "Validate the provided Credentials and, if valid, creates a new back-end session.", response = UserDTO.class)
 	@PostMapping("/login")
 	public UserDTO login(final HttpServletResponse servletResponse, @Valid @RequestBody final LoginDTO login) {
@@ -49,14 +50,14 @@ public class AccountController {
 		servletResponse.addCookie(new Cookie("roleName", Role.getKeyById(loggedUser.getIdRole())));
 		return mapper.map(loggedUser);
 	}
-
+	
 	@PostMapping("/signup")
 	public ResponseEntity<String> signup(@Valid @RequestBody SignupDTO request) {
 		// TODO: set the admin user which performed the action.
 		service.save(mapper.map(parse(request)), Operation.SIGNUP, 1L);
 		return new ResponseEntity<>(CmsConfig.RESPONSE_SUCCESS, HttpStatus.OK);
 	}
-
+	
 	@PostMapping("/reset/{email}")
 	public ResponseEntity<String> pwreset(@PathVariable String email) {
 		if (service.requestPwreset(email)) {
@@ -66,7 +67,17 @@ public class AccountController {
 		// something gone wrong....
 		return new ResponseEntity<>(CmsConfig.RESPONSE_USER_NOT_FOUND, HttpStatus.BAD_REQUEST);
 	}
-
+	
+	@GetMapping("/validate/{id}/{key}")
+	public ResponseEntity<String> validate(@PathVariable Long id, @PathVariable String key) {
+		if (service.validate(id, key)) {
+			// worked fine
+			return new ResponseEntity<>(CmsConfig.RESPONSE_SUCCESS, HttpStatus.OK);
+		}
+		// something gone wrong....
+		return new ResponseEntity<>(CmsConfig.RESPONSE_USER_NOT_FOUND, HttpStatus.BAD_REQUEST);
+	}
+	
 	private UserDTO parse(SignupDTO signup) {
 		//@formatter:off
 		return UserDTO.builder()
@@ -83,5 +94,5 @@ public class AccountController {
 				.build();
 		//@formatter:on
 	}
-
+	
 }
