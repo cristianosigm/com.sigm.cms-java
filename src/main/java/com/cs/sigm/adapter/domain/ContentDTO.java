@@ -18,17 +18,15 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class ContentDTO implements Serializable {
-
+	
 	private static final long serialVersionUID = 7531807705318187551L;
-
+	
 	private Long id;
-
-	private Long idPicture;
-
+	
 	@NotEmpty(message = "{validation.post.title}")
 	private String title;
-
+	
 	@NotEmpty(message = "{validation.post.content}")
 	private String content;
-
+	
 }

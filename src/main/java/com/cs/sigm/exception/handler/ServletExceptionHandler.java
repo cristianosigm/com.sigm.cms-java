@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.ModelAndView;
 
+// TODO: finish the development
+
 public class ServletExceptionHandler { // extends AbstractHandlerExceptionResolver {
 	
 	protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {

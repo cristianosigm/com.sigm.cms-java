@@ -130,6 +130,7 @@ public class UserService {
 		log.info("Sending the optin mail from {} to {}.", config.getMailFrom(), user.getEmail());
 		//@formatter:off
 		final StringBuilder msg = new StringBuilder(4096);
+		// TODO: create a valid email message, generate an unique key and set it as parameter for the page
 		msg.append("<p>To reset your password, click on the link below: </p>")
 				.append("<p><a href='").append(config.getAccountsBaseURL())
 				.append("/reset/").append(user.getEmail())

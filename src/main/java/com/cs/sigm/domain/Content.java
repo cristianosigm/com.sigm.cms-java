@@ -1,6 +1,5 @@
 package com.cs.sigm.domain;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,20 +20,19 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "tbl_post", indexes = { @Index(name = "idx_post_title", columnList = "title") })
+@Table(name = "tbl_post", indexes = {
+	@Index(name = "idx_post_title", columnList = "title")
+})
 public class Content {
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
-	@Column(name = "id_picture")
-	private Long idPicture;
-
-	@NotEmpty(message = "{validation.post.title}")
+	
+	@NotEmpty
 	private String title;
-
-	@NotEmpty(message = "{validation.post.content}")
+	
+	@NotEmpty
 	private String content;
-
+	
 }

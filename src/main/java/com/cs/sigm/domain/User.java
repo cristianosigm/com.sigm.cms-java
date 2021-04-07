@@ -22,44 +22,46 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "tbl_user", indexes = { @Index(name = "idx_user_username", columnList = "username", unique = true),
-		@Index(name = "idx_user_email", columnList = "email", unique = true) })
+@Table(name = "tbl_user", indexes = {
+	@Index(name = "idx_user_username", columnList = "username", unique = true), 
+	@Index(name = "idx_user_email", columnList = "email", unique = true)
+})
 public class User {
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
+	
 	@NotNull
 	@Column(name = "id_role")
 	private Long idRole;
-
-	@NotEmpty
-	private String username;
-
-	@NotEmpty
-	private String password;
-
-	@Column(name = "failed_attempts")
-	private Integer failedAttempts;
-
-	@NotEmpty
-	private String email;
-
-	@NotEmpty
-	private String name;
-
+	
+	private Boolean approved;
+	
+	private Boolean blocked;
+	
+	private Boolean validated;
+	
 	@NotEmpty
 	@Column(name = "display_name")
 	private String displayName;
-
+	
+	@NotEmpty
+	private String email;
+	
+	@Column(name = "failed_attempts")
+	private Integer failedAttempts;
+	
+	@NotEmpty
+	private String name;
+	
+	@NotEmpty
+	private String password;
+	
+	@NotEmpty
+	private String username;
+	
 	@NotEmpty
 	private String validationKey;
-
-	private Boolean approved;
-
-	private Boolean blocked;
-
-	private Boolean validated;
-
+	
 }
