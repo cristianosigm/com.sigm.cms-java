@@ -13,6 +13,7 @@ import com.cs.sigm.config.CmsConfig;
 import com.cs.sigm.domain.User;
 import com.cs.sigm.domain.UserLog;
 import com.cs.sigm.domain.fixed.Operation;
+import com.cs.sigm.exception.CmsAuthenticationException;
 import com.cs.sigm.exception.CmsEntryNotFoundException;
 import com.cs.sigm.exception.CmsMessagingException;
 import com.cs.sigm.repository.UserLogRepository;
@@ -63,8 +64,9 @@ public class UserService {
 			// TODO: translate the error message
 			final User curUser = repository.findById(request.getId()).orElseThrow(() -> new CmsEntryNotFoundException("Tried to update an User with an invalid ID."));
 			request.setUsername(curUser.getUsername());
-			request.setPassword(curUser.getPassword());
 			request.setEmail(curUser.getEmail());
+			request.setPassword(validPasswordChangeRequest(curUser, request) ? passwordEncoder.encode(request.getPassword()) : curUser.getPassword());
+			request.setValidationKey(curUser.getValidationKey());
 		} else {
 			log.info(" >> Creating a new user...");
 			passwordValidator.validate(request.getPassword());
@@ -76,12 +78,14 @@ public class UserService {
 		}
 		final User result = repository.save(request);
 		logRepository.save(UserLog.builder().idOperation(operation.getId()).idOperator(idOperator).idUser(result.getId()).build());
-		log.info(" >> User saved. Requesting validation...");
 		// TODO: what is the best approach for error handling in REST APIs?
-		try {
-			this.sendValidationMessage(result);
-		} catch (MessagingException e) {
-			log.error("Failed to send a message: " + e.getMessage(), e);
+		if (!result.getValidated()) {
+			log.info(" >> User saved. Requesting validation...");
+			try {
+				this.sendValidationMessage(result);
+			} catch (MessagingException e) {
+				log.error("Failed to send a message: " + e.getMessage(), e);
+			}
 		}
 		// ----------------------------------------------------------------
 		return result;
@@ -99,13 +103,16 @@ public class UserService {
 		return repository.getNameById(id);
 	}
 	
-	public boolean requestPwreset(String email) {
+	public boolean requestPasswordReset(String email) {
+		log.info("Trying to load an user with email: {}", email);
 		final User user = repository.findByEmail(email).orElse(null);
 		if (user == null) {
 			log.warn("Tried to reset a password to an non-exiting user.");
 			return false;
 		}
 		log.info("User found! Generating password reset flow and sending via email.");
+		user.setPasswordResetKey(generator.getRandomKey());
+		repository.save(user);
 		try {
 			this.sendResetMessage(user);
 			return true;
@@ -114,26 +121,67 @@ public class UserService {
 		}
 	}
 	
+	public void processPasswordReset(String email, String key, String password, String passwordConfirm) {
+		log.info("Processing the password reset request...");
+		final User user = this.repository.findByEmail(email).orElseThrow(() -> new CmsEntryNotFoundException("User not found."));
+		if (!user.getPasswordResetKey().equals(key)) {
+			throw new CmsAuthenticationException("Invalid password reset request.");
+		}
+		validPasswordConfirmation(password, passwordConfirm);
+		log.info("Password change request valid! Updating...");
+		user.setPassword(passwordEncoder.encode(password));
+		this.repository.save(user);
+		log.info("Password successfully reseted.");
+	}
+	
 	public boolean validate(Long id, String key) {
 		final User user = repository.findById(id).orElse(null);
 		if (user == null) {
 			log.warn("Tried to validate an non-existing user!");
 			return false;
 		}
-		log.info("user found. Setting status to validated.");
+		log.info("user found. Checking key.");
+		if (!user.getValidationKey().equals(key)) {
+			// TODO: add a JUnit test to check both valid and invalid keys!
+			throw new CmsAuthenticationException("Invalid validation key received.");
+		}
 		user.setValidated(true);
 		repository.save(user);
 		return true;
 	}
 	
+	private boolean validPasswordChangeRequest(User oldUser, User newUser) {
+		if (newUser.getChangePassword()) {
+			log.info("Password change requested. Analyzing...");
+			if (!passwordEncoder.matches(newUser.getCurrentPassword(), oldUser.getPassword())) {
+				throw new CmsAuthenticationException("Current password is invalid.");
+			}
+			validPasswordConfirmation(newUser.getPassword(), newUser.getPasswordConfirm());
+			return true;
+		}
+		log.info("Password not changed.");
+		return false;
+	}
+	
+	private void validPasswordConfirmation(String password, String passwordConfirm) {
+		if (password == null || password.isBlank() || passwordConfirm == null || passwordConfirm.isBlank()) {
+			throw new CmsAuthenticationException("The new password must not be blank.");
+		}
+		if (!password.equals(passwordConfirm)) {
+			throw new CmsAuthenticationException("The confirmation password do not match.");
+		}
+		passwordValidator.validate(password);
+	}
+	
 	private void sendResetMessage(User user) throws MessagingException {
-		log.info("Sending the optin mail from {} to {}.", config.getMailFrom(), user.getEmail());
+		log.info("Sending a password reset mail from {} to {}.", config.getMailFrom(), user.getEmail());
 		//@formatter:off
 		final StringBuilder msg = new StringBuilder(4096);
 		// TODO: create a valid email message, generate an unique key and set it as parameter for the page
 		msg.append("<p>To reset your password, click on the link below: </p>")
-				.append("<p><a href='").append(config.getAccountsBaseURL())
-				.append("/reset/").append(user.getEmail())
+				.append("<p><a href='").append(config.getPwResetFormURL())
+				.append("/").append(user.getEmail())
+				.append("/").append(user.getPasswordResetKey())
 				.append("'>click here</a></p>");
 		
 		mailService.sendMail(
@@ -141,7 +189,7 @@ public class UserService {
 				.addressFrom(config.getMailFrom())
 				.addressTo(user.getEmail())
 				.message(msg.toString())
-				.subject("Please confirm your email")
+				.subject("Password reset")
 			.build()
 		);
 		//@formatter:on

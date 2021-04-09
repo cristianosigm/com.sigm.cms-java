@@ -43,6 +43,8 @@ public class CmsConfig {
 	
 	private String accountsBaseURL;
 	
+	private String pwResetFormURL;
+	
 	private int pwMinSize;
 	
 	private int pwMaxSize;

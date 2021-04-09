@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -23,8 +24,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @Table(name = "tbl_user", indexes = {
-	@Index(name = "idx_user_username", columnList = "username", unique = true), 
-	@Index(name = "idx_user_email", columnList = "email", unique = true)
+	@Index(name = "idx_user_username", columnList = "username", unique = true), @Index(name = "idx_user_email", columnList = "email", unique = true)
 })
 public class User {
 	
@@ -58,10 +58,21 @@ public class User {
 	@NotEmpty
 	private String password;
 	
+	private String passwordResetKey;
+	
 	@NotEmpty
 	private String username;
 	
 	@NotEmpty
 	private String validationKey;
+	
+	@Transient
+	private Boolean changePassword;
+	
+	@Transient
+	private String currentPassword;
+	
+	@Transient
+	private String passwordConfirm;
 	
 }

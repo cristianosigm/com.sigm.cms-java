@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cs.sigm.adapter.domain.LoginDTO;
+import com.cs.sigm.adapter.domain.PasswordResetDTO;
 import com.cs.sigm.adapter.domain.SignupDTO;
 import com.cs.sigm.adapter.domain.UserDTO;
 import com.cs.sigm.config.CmsConfig;
@@ -58,14 +59,20 @@ public class AccountController {
 		return new ResponseEntity<>(CmsConfig.RESPONSE_SUCCESS, HttpStatus.OK);
 	}
 	
-	@PostMapping("/reset/{email}")
-	public ResponseEntity<String> pwreset(@PathVariable String email) {
-		if (service.requestPwreset(email)) {
+	@GetMapping("/reset/{email}")
+	public ResponseEntity<String> resetRequest(@PathVariable String email) {
+		if (service.requestPasswordReset(email)) {
 			// worked fine
 			return new ResponseEntity<>(CmsConfig.RESPONSE_SUCCESS, HttpStatus.OK);
 		}
 		// something gone wrong....
 		return new ResponseEntity<>(CmsConfig.RESPONSE_USER_NOT_FOUND, HttpStatus.BAD_REQUEST);
+	}
+	
+	@PostMapping("/reset")
+	public ResponseEntity<String> resetProcess(@Valid @RequestBody PasswordResetDTO request) {
+		service.processPasswordReset(request.getEmail(), request.getResetKey(), request.getPassword(), request.getPasswordConfirm());
+		return new ResponseEntity<>(CmsConfig.RESPONSE_SUCCESS, HttpStatus.OK);
 	}
 	
 	@GetMapping("/validate/{id}/{key}")

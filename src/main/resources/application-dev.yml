@@ -55,6 +55,7 @@ cms:
   mailPort: 2525
   mailFrom: development@gmail.com
   accountsBaseURL: http://localhost:8081/cms/accounts
+  pwResetFormURL: http://localhost:4200/reset-form
   pwMinSize: 3
   pwMaxSize: 15
   pwLowercaseRequired: true

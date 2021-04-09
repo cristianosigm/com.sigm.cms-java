@@ -26,6 +26,9 @@ public class UserMapper {
 			.validated(request.getValidated())
 			.username((request.getUsername() == null || request.getUsername().isBlank()) ? request.getEmail() : request.getUsername())
 			.password(request.getPassword())
+			.changePassword(request.getChangePassword() == null ? Boolean.FALSE : request.getChangePassword())
+			.currentPassword(request.getCurrentPassword())
+			.passwordConfirm(request.getPasswordConfirm())
 			.build();
 		// @formatter:on
 	}
