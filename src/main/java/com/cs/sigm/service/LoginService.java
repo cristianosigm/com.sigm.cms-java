@@ -30,12 +30,11 @@ public class LoginService {
 		if (passwordEncoder.matches(request.getPassword(), userDetails.getPassword())) {
 			// TODO: translate the messages
 			// user and password OK
-			final User user = repository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new CmsAuthenticationException("User or password invalid...."));
-			if (!user.getValidated()) {
+			if (!userDetails.isEnabled()) {
 				// user has not yet a valid email
 				throw new CmsAuthenticationException("Please validate your email before using the portal.");
 			}
-			return user;
+			return repository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new CmsAuthenticationException("User or password invalid...."));
 		} else {
 			throw new CmsAuthenticationException("User or password invalid....");
 		}

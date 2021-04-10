@@ -57,5 +57,4 @@ public class CmsConfig {
 	
 	private boolean pwSpecialRequired;
 	
-	
 }
