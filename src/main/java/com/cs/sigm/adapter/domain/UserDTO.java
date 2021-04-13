@@ -37,7 +37,7 @@ public class UserDTO implements Serializable {
 	@NotEmpty(message = "{validation.user.email}")
 	private String email;
 	
-	private Integer failedAttempts;
+//	private Integer failedAttempts;
 	
 	@NotEmpty(message = "{validation.user.name}")
 	private String name;

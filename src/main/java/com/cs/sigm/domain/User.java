@@ -49,8 +49,9 @@ public class User {
 	@NotEmpty
 	private String email;
 	
+	@Builder.Default
 	@Column(name = "failed_attempts")
-	private Integer failedAttempts;
+	private Integer failedAttempts = 0;
 	
 	@NotEmpty
 	private String name;
@@ -74,5 +75,9 @@ public class User {
 	
 	@Transient
 	private String passwordConfirm;
+	
+	public void increaseFailedAttepts() {
+		this.failedAttempts = Integer.valueOf(this.failedAttempts.intValue() + 1);
+	}
 	
 }

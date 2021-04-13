@@ -21,7 +21,7 @@ public class AuthUserDetailsService extends GrantedAuthoritiesGenerator implemen
 	@Override
 	public UserDetails loadUserByUsername(final String email) {
 		final com.cs.sigm.domain.User user = userRepository.findByEmail(email).orElseThrow(() -> new CmsAuthenticationException());
-		return new User(user.getEmail(), user.getPassword(), user.getValidated(), true, true, user.getBlocked(), getGrantedAuthorities(Role.getKeyById(user.getIdRole())));
+		return new User(user.getEmail(), user.getPassword(), user.getValidated(), true, true, !user.getBlocked(), getGrantedAuthorities(Role.getKeyById(user.getIdRole())));
 	}
 	
 }

@@ -138,12 +138,29 @@ public class UserService {
 		}
 		log.info("user found. Checking key.");
 		if (!user.getValidationKey().equals(key)) {
-			// TODO: add a JUnit test to check both valid and invalid keys!
 			throw new CmsAuthenticationException("Invalid validation key received.");
 		}
 		user.setValidated(true);
 		repository.save(user);
 		return true;
+	}
+	
+	public User checkAccountLock(String username) {
+		final User checkUser = repository.findByEmail(username).orElseThrow(() -> new CmsAuthenticationException());
+		log.info("User found. Current failed attempts: " + checkUser.getFailedAttempts().toString());
+		if (checkUser.getFailedAttempts().intValue() >= config.getPwMaxIncorrectTries()) {
+			log.warn(" >> Locking user account!!");
+			checkUser.setBlocked(true);
+		} else {
+			log.info(" > Increasing the account failed attempts");
+		}
+		checkUser.increaseFailedAttepts();
+		final User result = repository.save(checkUser);
+		
+		log.info(" > Current result attempts: " + result.getFailedAttempts().toString());
+		
+		return result;
+		
 	}
 	
 	private boolean validPasswordChangeRequest(User oldUser, User newUser) {

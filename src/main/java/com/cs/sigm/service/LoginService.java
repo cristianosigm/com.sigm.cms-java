@@ -4,17 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.cs.sigm.adapter.domain.LoginDTO;
 import com.cs.sigm.domain.User;
+import com.cs.sigm.exception.CmsAccountLockedException;
 import com.cs.sigm.exception.CmsAuthenticationException;
 import com.cs.sigm.exception.CmsMissingValidationException;
 import com.cs.sigm.repository.UserRepository;
 import com.cs.sigm.security.auth.AuthUserDetailsService;
 
 @Service
-@Transactional
 public class LoginService {
 	
 	@Autowired
@@ -26,17 +25,30 @@ public class LoginService {
 	@Autowired
 	private UserRepository repository;
 	
+	@Autowired
+	private UserService userService;
+	
 	public User checkLogin(final LoginDTO request) {
 		final UserDetails userDetails = authUserDetailsService.loadUserByUsername(request.getUsername());
-		if (passwordEncoder.matches(request.getPassword(), userDetails.getPassword())) {
-			// user and password OK
-			if (!userDetails.isEnabled()) {
-				// user has not yet a valid email
-				throw new CmsMissingValidationException("Account not validated.");
+		if (userDetails.isAccountNonLocked()) {
+			if (passwordEncoder.matches(request.getPassword(), userDetails.getPassword())) {
+				// user and password OK
+				if (!userDetails.isEnabled()) {
+					// user has not yet a valid email
+					throw new CmsMissingValidationException("Account not validated.");
+				}
+				final User validUser = repository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new CmsAuthenticationException());
+				if (validUser.getFailedAttempts().intValue() > 0) {
+					repository.resetFailedLoginAttempts(request.getUsername());
+				}
+				return validUser;
+			} else {
+				// invalid credentials
+				userService.checkAccountLock(request.getUsername());
+				throw new CmsAuthenticationException();
 			}
-			return repository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new CmsAuthenticationException());
 		} else {
-			throw new CmsAuthenticationException();
+			throw new CmsAccountLockedException("Please reset your account to proceed.");
 		}
 	}
 	

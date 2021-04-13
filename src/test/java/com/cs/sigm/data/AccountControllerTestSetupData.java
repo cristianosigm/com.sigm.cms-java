@@ -9,49 +9,31 @@ import com.cs.sigm.adapter.domain.SignupDTO;
 @Disabled
 public class AccountControllerTestSetupData extends CmsTestSetup {
 	
-	// Test Data for Account Controller
-	// -----------------------------------------------------
-	// @formatter:off
+	private final int testSize = 10;
 	
-	protected SignupDTO signup01 = SignupDTO.builder()
-			.displayName("Signup 01")
-			.email("signup01@test.com")
-			.name("Valid Signup Request 01")
-			.password("Val1dt$t")
-			.passwordConfirm("Val1dt$t")
-			.build();
+	protected SignupDTO[] signupValid = new SignupDTO[testSize];
 	
-	protected LoginDTO login01 = LoginDTO.builder()
-			.password("Val1dt$t")
-			.username("signup01@test.com")
-			.build();
-
-	protected SignupDTO signup02 = SignupDTO.builder()
-			.displayName("Signup 02")
-			.email("signup02@test.com")
-			.name("Valid Signup Request 02")
-			.password("Val1dt$t")
-			.passwordConfirm("Val1dt$t")
-			.build();
-
-	protected LoginDTO login02 = LoginDTO.builder()
-		.password("Val1dt$t")
-		.username("signup02@test.com")
-		.build();
-
-	protected SignupDTO signup03 = SignupDTO.builder()
-		.displayName("Signup 03")
-		.email("signup03@test.com")
-		.name("Valid Signup Request 03")
-		.password("Val1dt$t")
-		.passwordConfirm("Val1dt$t")
-		.build();
-
-	protected LoginDTO login03 = LoginDTO.builder()
-		.password("Val1dt$t")
-		.username("signup03@test.com")
-		.build();
-
+	protected LoginDTO[] loginValid = new LoginDTO[testSize];
+	
+	public AccountControllerTestSetupData() {
+		for (int pos = 0; pos < testSize; pos++) {
+			//@formatter:off
+			signupValid[pos] = SignupDTO.builder()
+				.displayName("Signup " + pos)
+				.email("signup" + pos + "@test.com")
+				.name("Valid Signup Request " + pos)
+				.password("Val1dt$t")
+				.passwordConfirm("Val1dt$t")
+				.build();
+			loginValid[pos] = LoginDTO.builder()
+				.password("Val1dt$t")
+				.username("signup" + pos + "@test.com")
+				.build();
+			//@formatter:on
+		}
+	}
+	
+	//@formatter:off
 	protected SignupDTO signupNotValidated = SignupDTO.builder()
 		.displayName("Signup Not Validate")
 		.email("signupnv@test.com")
@@ -68,7 +50,7 @@ public class AccountControllerTestSetupData extends CmsTestSetup {
 	protected LoginDTO loginInvalid = LoginDTO.builder()
 		.password("Val1dt$t")
 		.username("signupinvalid@test.com")
-		.build();
-	
+		.build();	
 	// @formatter:on
+	
 }

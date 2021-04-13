@@ -3,10 +3,11 @@ logging:
     name: cms-dev.log
     path: logs/
   level:
-    root: info
-    web: info
-    org.springframework.web: info
-    com.cs.sigm: info
+    root: error
+    web: error
+    org.springframework.web: error
+    org.springframework.transaction: warn    
+    com.cs.sigm: warn
 server:
   forward-headers-strategy: framework
   port: 8081
@@ -61,4 +62,5 @@ cms:
   pwUppercaseRequired: true
   pwNumericRequired: true
   pwSpecialRequired: true
+  pwMaxIncorrectTries: 5
   

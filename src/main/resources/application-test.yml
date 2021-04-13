@@ -3,6 +3,7 @@ logging:
     root: info
     web: info
     org.springframework.web: info
+    org.springframework.transaction: info    
     com.cs.sigm: info
 server:
   port: 8081
@@ -54,4 +55,5 @@ cms:
   pwUppercaseRequired: true
   pwNumericRequired: true
   pwSpecialRequired: true
+  pwMaxIncorrectTries: 2
   

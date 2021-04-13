@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.cs.sigm.exception.CmsAccountLockedException;
 import com.cs.sigm.exception.CmsAuthenticationException;
 import com.cs.sigm.exception.CmsEntryNotFoundException;
 import com.cs.sigm.exception.CmsMessagingUnavailableException;
@@ -28,6 +29,13 @@ public class CmsServletExceptionHandler extends ResponseEntityExceptionHandler {
 	
 	@Autowired
 	MessageSource messageSource;
+	
+	@ExceptionHandler(value = {
+		CmsAccountLockedException.class
+	})
+	protected ResponseEntity<Object> handleCmsAccountLockedException(RuntimeException exception, WebRequest request) {
+		return dispatchErrorHandling(HttpStatus.LOCKED.value(), ErrorCode.SEC_ACCOUNT_LOCKED, exception, request);
+	}
 	
 	@ExceptionHandler(value = {
 		CmsMissingValidationException.class
