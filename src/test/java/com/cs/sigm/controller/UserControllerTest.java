@@ -4,9 +4,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.cs.sigm.CmsTestSetup;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
+//@Slf4j
 @SpringBootTest
 //@TestMethodOrder(OrderAnnotation.class)
 public class UserControllerTest extends CmsTestSetup {

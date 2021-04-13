@@ -36,11 +36,14 @@ public class User {
 	@Column(name = "id_role")
 	private Long idRole;
 	
-	private Boolean approved;
+	@Builder.Default
+	private Boolean approved = false;
 	
-	private Boolean blocked;
+	@Builder.Default
+	private Boolean blocked = false;
 	
-	private Boolean validated;
+	@Builder.Default
+	private Boolean validated = false;
 	
 	@NotEmpty
 	@Column(name = "display_name")

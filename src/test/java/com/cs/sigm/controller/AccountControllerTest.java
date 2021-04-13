@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.subethamail.wiser.Wiser;
 
 import com.cs.sigm.adapter.domain.LoginDTO;
+import com.cs.sigm.adapter.domain.PasswordResetDTO;
 import com.cs.sigm.adapter.domain.SignupDTO;
 import com.cs.sigm.config.CmsConfig;
 import com.cs.sigm.data.AccountControllerTestSetupData;
@@ -138,12 +139,12 @@ public class AccountControllerTest extends AccountControllerTestSetupData {
 	
 	@Test
 	public void when_SignupValid_then_Success() throws Exception {
-		signup(signupValid[0]).andExpect(status().isOk());
+		performValidSignup(signupValid[0]);
 	}
 	
 	@Test
 	public void when_LoginWithAccountNotValidated_then_Fail() throws Exception {
-		signup(signupNotValidated).andExpect(status().isOk());
+		performValidSignup(signupNotValidated);
 		//@formatter:off
 		login(loginNotValidated)
 			.andExpect(status().is5xxServerError())
@@ -166,10 +167,9 @@ public class AccountControllerTest extends AccountControllerTestSetupData {
 	
 	@Test
 	public void when_ValidateAccountWithInvalidKey_then_Fail() throws Exception {
-		// signup
-		signup(signupValid[1]).andExpect(status().isOk());
-		// validate the account
-		final User usr = this.userRepository.findByEmail(signupValid[1].getEmail()).orElseThrow(() -> new CmsEntryNotFoundException("Failed to find the test user via email."));
+		final SignupDTO curSignup = signupValid[1];
+		performValidSignup(curSignup);
+		final User usr = loadUserByEmail(curSignup.getEmail());
 		//@formatter:off
 		validate(usr.getId(), usr.getValidationKey().concat("x"))
 			.andExpect(status().is5xxServerError())
@@ -181,23 +181,19 @@ public class AccountControllerTest extends AccountControllerTestSetupData {
 	
 	@Test
 	public void when_ValidateAccountWithValidKey_then_Success() throws Exception {
-		// signup
-		signup(signupValid[2]).andExpect(status().isOk());
-		// validate the account
-		final User usr = this.userRepository.findByEmail(signupValid[2].getEmail()).orElseThrow(() -> new CmsEntryNotFoundException("Failed to find the test user via email."));
-		validate(usr.getId(), usr.getValidationKey()).andExpect(status().isOk());
+		final SignupDTO curSignup = signupValid[2];
+		performValidSignup(curSignup);
+		performAccountValidation(curSignup);
 	}
 	
 	@Test
 	public void when_LoginWithValidatedAccount_then_Success() throws Exception {
-		// signup
-		signup(signupValid[3]).andExpect(status().isOk());
-		// validate the account
-		final User usr = this.userRepository.findByEmail(signupValid[3].getEmail()).orElseThrow(() -> new CmsEntryNotFoundException("Failed to find the test user via email."));
-		validate(usr.getId(), usr.getValidationKey()).andExpect(status().isOk());
-		// login
+		final SignupDTO curSignup = signupValid[3];
+		final LoginDTO curLogin = loginValid[3];
+		performValidSignup(curSignup);
+		final User usr = performAccountValidation(curSignup);
 		//@formatter:off
-		login(loginValid[3])
+		login(curLogin)
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.id").value(usr.getId().toString()))
 			.andExpect(jsonPath("$.name").value(usr.getName()))
@@ -208,40 +204,100 @@ public class AccountControllerTest extends AccountControllerTestSetupData {
 	
 	@Test
 	public void when_MaxfailedLoginAttemptsWithInvalidCredentials_then_AccountIsLocked() throws Exception {
-		// signup
-		signup(signupValid[4]).andExpect(status().isOk());
-		// validate the account
-		final User usr = this.userRepository.findByEmail(signupValid[4].getEmail()).orElseThrow(() -> new CmsEntryNotFoundException("Failed to find the test user via email."));
+		performSignupThenlockAnAccountAndConfirm(signupValid[4], loginValid[4]);
+	}
+	
+	@Test
+	public void when_ValidPasswordResetRequestedForLockedAccount_then_AccountUnlocked() throws Exception {
+		final SignupDTO curSignup = signupValid[5];
+		final LoginDTO curLogin = loginValid[5];
+		performSignupThenlockAnAccountAndConfirm(curSignup, curLogin);
+		resetPassword(curSignup);
+		final User usr = loadUserByEmail(curSignup.getEmail());
+		curLogin.setPassword("V4l1dP4$$w4rd");
+		//@formatter:off
+		login(curLogin)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.id").value(usr.getId().toString()))
+			.andExpect(jsonPath("$.name").value(usr.getName()))
+			.andExpect(jsonPath("$.blocked").value(Boolean.FALSE.toString()))
+			;
+		//@formatter:on
+	}
+	
+	@Test
+	public void when_InvalidPasswordResetRequested_then_Fail() throws Exception {
+		final SignupDTO curSignup = signupValid[6];
+		signup(curSignup).andExpect(status().isOk());
+		resetRequest(curSignup.getEmail());
+		//@formatter:off
+		final PasswordResetDTO pwReset = PasswordResetDTO.builder()
+			.email(curSignup.getEmail())
+			.password("V4l1dP4$$w4rd")
+			.passwordConfirm("V4l1dP4$$w4rd")
+			.resetKey("InvalidPasswordResetKey")
+			.build();
+		resetProcess(pwReset)
+			.andExpect(status().is5xxServerError())
+			.andExpect(jsonPath("$.error").value(containsString(ErrorCode.SEC_INVALID_CREDENTIALS.getCode())))
+			.andExpect(jsonPath("$.details").value(containsString("Invalid password reset request")))
+			;
+		//@formatter:on
+	}
+	
+	@Test
+	public void when_ValidPasswordResetRequested_then_ResetPassword() throws Exception {
+		final SignupDTO curSignup = signupValid[7];
+		final LoginDTO curLogin = loginValid[7];
+		performSignupThenlockAnAccountAndConfirm(curSignup, curLogin);
+		resetPassword(curSignup);
+	}
+	
+	private User loadUserByEmail(String email) throws Exception {
+		return this.userRepository.findByEmail(email).orElseThrow(() -> new CmsEntryNotFoundException("Failed to find the test user via email."));
+	}
+	
+	private void performValidSignup(final SignupDTO targetSignup) throws Exception {
+		signup(targetSignup).andExpect(status().isOk());
+	}
+	
+	private User performAccountValidation(final SignupDTO targetSignup) throws Exception {
+		final User usr = loadUserByEmail(targetSignup.getEmail());
 		validate(usr.getId(), usr.getValidationKey()).andExpect(status().isOk());
-		// locking up account
-		loginValid[4].setPassword("Wr0ngp4$$0rd");
+		return usr;
+	}
+	
+	private void resetPassword(SignupDTO targetSignup) throws Exception {
+		resetRequest(targetSignup.getEmail());
+		final User usr = loadUserByEmail(targetSignup.getEmail());
+		final PasswordResetDTO pwReset = PasswordResetDTO.builder().email(usr.getEmail()).password("V4l1dP4$$w4rd").passwordConfirm("V4l1dP4$$w4rd").resetKey(usr.getPasswordResetKey()).build();
+		resetProcess(pwReset).andExpect(status().isOk());
+	}
+	
+	private void performSignupThenlockAnAccountAndConfirm(final SignupDTO targetSignup, final LoginDTO targetLogin) throws Exception {
+		performValidSignup(targetSignup);
+		final User usr = loadUserByEmail(targetSignup.getEmail());
+		validate(usr.getId(), usr.getValidationKey()).andExpect(status().isOk());
+		targetLogin.setPassword("Wr0ngp4$$0rd");
 		for (int i = 0; i <= (config.getPwMaxIncorrectTries()); i++) {
 			//@formatter:off
-			login(loginValid[4])
+			login(targetLogin)
 			.andExpect(status().is5xxServerError())
 			.andExpect(jsonPath("$.error").value(containsString(ErrorCode.SEC_INVALID_CREDENTIALS.getCode())))
 			.andExpect(jsonPath("$.details").isEmpty())
 			;
 			//@formatter:on
 		}
-		// next attempt will get a different exception
-		
 		//@formatter:off
-		login(loginValid[4])
+		login(targetLogin)
 		.andExpect(status().is5xxServerError())
 		.andExpect(jsonPath("$.error").value(containsString(ErrorCode.SEC_ACCOUNT_LOCKED.getCode())))
 		.andExpect(jsonPath("$.details").value(containsString("Please reset your account to proceed")))
 		;
 		//@formatter:on
-		
-		// checking if is locked
-		final User usrLocked = this.userRepository.findByEmail(signupValid[4].getEmail()).orElseThrow(() -> new CmsEntryNotFoundException("Failed to find the test user via email."));
+		final User usrLocked = loadUserByEmail(targetSignup.getEmail());
 		log.info(" Current status of the user: failedAttempts = " + usrLocked.getFailedAttempts().toString() + "; blocked = " + usrLocked.getBlocked().toString());
 		assertTrue(usrLocked.getBlocked().booleanValue());
-	}
-	
-	@Test
-	public void when_UnlockAccount_then_AccountUnlocked() throws Exception {
 	}
 	
 	private ResultActions signup(SignupDTO request) throws Exception {
@@ -253,7 +309,15 @@ public class AccountControllerTest extends AccountControllerTestSetupData {
 	}
 	
 	private ResultActions validate(Long id, String email) throws Exception {
-		return mvc.perform(get(BASE_URL.concat("/validate/".concat(id.toString()).concat("/").concat(email))).accept(MediaType.APPLICATION_JSON));
+		return mvc.perform(get(BASE_URL.concat("/validate/").concat(id.toString()).concat("/").concat(email)).accept(MediaType.APPLICATION_JSON));
+	}
+	
+	private ResultActions resetRequest(String email) throws Exception {
+		return mvc.perform(get(BASE_URL.concat("/reset/").concat(email)).accept(MediaType.APPLICATION_JSON));
+	}
+	
+	private ResultActions resetProcess(PasswordResetDTO request) throws Exception {
+		return mvc.perform(post(BASE_URL.concat("/reset")).content(this.mapper.writeValueAsBytes(request)).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
 	}
 	
 }

@@ -60,18 +60,24 @@ public class UserService {
 	
 	public User save(User request, Operation operation, Long idOperator) {
 		if (request.getId() != null) {
-			log.info(" >> Trying to update an existing user...");
+			log.info(" Updating an existing user...");
 			final User curUser = repository.findById(request.getId()).orElseThrow(() -> new CmsEntryNotFoundException("Tried to update an User with an invalid ID."));
-			request.setUsername(curUser.getUsername());
+			// attributes that cannot be updated from outside --------------------
+			request.setApproved(curUser.getApproved());
+			request.setBlocked(curUser.getBlocked());
 			request.setEmail(curUser.getEmail());
-			request.setPassword(validPasswordChangeRequest(curUser, request) ? passwordEncoder.encode(request.getPassword()) : curUser.getPassword());
+			request.setFailedAttempts(curUser.getFailedAttempts());
+			request.setUsername(curUser.getUsername());
+			request.setValidated(curUser.getValidated());
 			request.setValidationKey(curUser.getValidationKey());
+			// -------------------------------------------------------------------
+			request.setPassword(validPasswordChangeRequest(curUser, request) ? passwordEncoder.encode(request.getPassword()) : curUser.getPassword());
 		} else {
-			log.info(" >> Trying to create a new user...");
+			log.info(" Creating a new user...");
 			validPasswordConfirmation(request.getPassword(), request.getPasswordConfirm());
 			request.setPassword(passwordEncoder.encode(request.getPassword()));
 		}
-		log.info(" >> Adding a validation key if not validated...");
+		log.info(" Adding a validation key if not validated...");
 		if (!request.getValidated()) {
 			request.setValidationKey(generator.getRandomKey());
 		}
@@ -126,6 +132,7 @@ public class UserService {
 		validPasswordConfirmation(password, passwordConfirm);
 		log.info("Password change request valid! Updating...");
 		user.setPassword(passwordEncoder.encode(password));
+		user.setBlocked(Boolean.FALSE);
 		this.repository.save(user);
 		log.info("Password successfully reseted.");
 	}
