@@ -15,7 +15,7 @@ import com.cs.sigm.domain.UserLog;
 import com.cs.sigm.domain.fixed.Operation;
 import com.cs.sigm.exception.CmsAuthenticationException;
 import com.cs.sigm.exception.CmsEntryNotFoundException;
-import com.cs.sigm.exception.CmsMessagingException;
+import com.cs.sigm.exception.CmsMessagingUnavailableException;
 import com.cs.sigm.repository.UserLogRepository;
 import com.cs.sigm.repository.UserRepository;
 import com.cs.sigm.security.mail.MailMessage;
@@ -60,16 +60,15 @@ public class UserService {
 	
 	public User save(User request, Operation operation, Long idOperator) {
 		if (request.getId() != null) {
-			log.info(" >> Updating an existing user...");
-			// TODO: translate the error message
+			log.info(" >> Trying to update an existing user...");
 			final User curUser = repository.findById(request.getId()).orElseThrow(() -> new CmsEntryNotFoundException("Tried to update an User with an invalid ID."));
 			request.setUsername(curUser.getUsername());
 			request.setEmail(curUser.getEmail());
 			request.setPassword(validPasswordChangeRequest(curUser, request) ? passwordEncoder.encode(request.getPassword()) : curUser.getPassword());
 			request.setValidationKey(curUser.getValidationKey());
 		} else {
-			log.info(" >> Creating a new user...");
-			passwordValidator.validate(request.getPassword());
+			log.info(" >> Trying to create a new user...");
+			validPasswordConfirmation(request.getPassword(), request.getPasswordConfirm());
 			request.setPassword(passwordEncoder.encode(request.getPassword()));
 		}
 		log.info(" >> Adding a validation key if not validated...");
@@ -78,23 +77,20 @@ public class UserService {
 		}
 		final User result = repository.save(request);
 		logRepository.save(UserLog.builder().idOperation(operation.getId()).idOperator(idOperator).idUser(result.getId()).build());
-		// TODO: what is the best approach for error handling in REST APIs?
 		if (!result.getValidated()) {
 			log.info(" >> User saved. Requesting validation...");
 			try {
 				this.sendValidationMessage(result);
 			} catch (MessagingException e) {
-				log.error("Failed to send a message: " + e.getMessage(), e);
+				throw new CmsMessagingUnavailableException("Failed to send an account validation message", e);
 			}
 		}
-		// ----------------------------------------------------------------
 		return result;
 	}
 	
 	public void deleteSingle(Long id) {
 		if (repository.findById(id).isEmpty()) {
-			// TODO: translate the error message
-			throw new CmsEntryNotFoundException("The requested entry does not exist, therefore, was not deleted.");
+			throw new CmsEntryNotFoundException("The requested entry does not exist, therefore, it was not deleted.");
 		}
 		repository.deleteById(id);
 	}
@@ -117,7 +113,7 @@ public class UserService {
 			this.sendResetMessage(user);
 			return true;
 		} catch (MessagingException e) {
-			throw new CmsMessagingException("Failed to send a password reset message", e);
+			throw new CmsMessagingUnavailableException("Failed to send a password reset message", e);
 		}
 	}
 	

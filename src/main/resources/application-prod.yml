@@ -56,7 +56,7 @@ cms:
   mailFrom: development@gmail.com
   accountsBaseURL: http://localhost:8081/cms/accounts
   pwMinSize: 8
-  pwMaxSize: 15
+  pwMaxSize: 16
   pwLowercaseRequired: true
   pwUppercaseRequired: true
   pwNumericRequired: true

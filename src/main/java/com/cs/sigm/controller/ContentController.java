@@ -38,8 +38,7 @@ public class ContentController {
 
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ContentDTO findSingle(@PathVariable Long id) {
-		// TODO: translate this message
-		return mapper.map(service.findSingle(id).orElseThrow(() -> new CmsEntryNotFoundException("Not found")));
+		return mapper.map(service.findSingle(id).orElseThrow(() -> new CmsEntryNotFoundException("Content not found.")));
 	}
 
 	@PostMapping

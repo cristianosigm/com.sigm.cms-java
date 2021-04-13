@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cs.sigm.adapter.domain.LoginDTO;
 import com.cs.sigm.domain.User;
 import com.cs.sigm.exception.CmsAuthenticationException;
+import com.cs.sigm.exception.CmsMissingValidationException;
 import com.cs.sigm.repository.UserRepository;
 import com.cs.sigm.security.auth.AuthUserDetailsService;
 
@@ -28,15 +29,14 @@ public class LoginService {
 	public User checkLogin(final LoginDTO request) {
 		final UserDetails userDetails = authUserDetailsService.loadUserByUsername(request.getUsername());
 		if (passwordEncoder.matches(request.getPassword(), userDetails.getPassword())) {
-			// TODO: translate the messages
 			// user and password OK
 			if (!userDetails.isEnabled()) {
 				// user has not yet a valid email
-				throw new CmsAuthenticationException("Please validate your email before using the portal.");
+				throw new CmsMissingValidationException("Account not validated.");
 			}
-			return repository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new CmsAuthenticationException("User or password invalid...."));
+			return repository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new CmsAuthenticationException());
 		} else {
-			throw new CmsAuthenticationException("User or password invalid....");
+			throw new CmsAuthenticationException();
 		}
 	}
 	

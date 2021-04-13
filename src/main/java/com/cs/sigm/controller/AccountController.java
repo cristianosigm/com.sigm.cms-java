@@ -96,6 +96,7 @@ public class AccountController {
 				.idRole(Role.STANDARD.getId())
 				.name(signup.getName())
 				.password(signup.getPassword())
+				.passwordConfirm(signup.getPasswordConfirm())
 				.username(signup.getEmail())
 				.validated(false)
 				.build();

@@ -48,10 +48,10 @@ cms:
   mailPort: 2525
   mailFrom: development@gmail.com
   accountsBaseURL: http://localhost:8081/cms/accounts
-  pwMinSize: 3
-  pwMaxSize: 15
+  pwMinSize: 8
+  pwMaxSize: 16
   pwLowercaseRequired: true
-  pwUppercaseRequired: false
+  pwUppercaseRequired: true
   pwNumericRequired: true
-  pwSpecialRequired: false
+  pwSpecialRequired: true
   
