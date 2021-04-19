@@ -11,10 +11,11 @@ public enum Operation {
 	VALIDATE(2L, "validate"),
 	SIGNUP(3L, "signup"),
 	UPDATE(4L, "update"),
-	APPROVE(5L, "approve"),
-	RESET(6L, "reset"),
-	REMOVE(7L, "remove"),
-	REJECT(8L, "reject");
+	CHANGEPASSWORD(5L, "change password"),
+	APPROVE(6L, "approve"),
+	RESET(7L, "reset"),
+	REMOVE(8L, "remove"),
+	REJECT(9L, "reject");
 	
 	private Long id;
 	

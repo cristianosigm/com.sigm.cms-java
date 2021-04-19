@@ -17,16 +17,18 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ContentDTO implements Serializable {
+public class PasswordResetDTO implements Serializable {
 	
-	private static final long serialVersionUID = 7531807705318187551L;
+	private static final long serialVersionUID = 2725869537945260978L;
 	
-	private Long id;
+	private String email;
 	
-	@NotEmpty(message = "{validation.post.title}")
-	private String title;
+	private String resetKey;
 	
-	@NotEmpty(message = "{validation.post.content}")
-	private String content;
+	@NotEmpty(message = "{validation.reset.password}")
+	private String password;
+	
+	@NotEmpty(message = "{validation.reset.passwordConfirm}")
+	private String passwordConfirm;
 	
 }

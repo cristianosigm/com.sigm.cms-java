@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cs.sigm.adapter.domain.LoginDTO;
+import com.cs.sigm.adapter.domain.PasswordResetDTO;
 import com.cs.sigm.adapter.domain.SignupDTO;
 import com.cs.sigm.adapter.domain.UserDTO;
 import com.cs.sigm.config.CmsConfig;
@@ -53,19 +54,25 @@ public class AccountController {
 	
 	@PostMapping("/signup")
 	public ResponseEntity<String> signup(@Valid @RequestBody SignupDTO request) {
-		// TODO: set the admin user which performed the action.
+		// TODO: what will be the ID of the Admin ID for signup?
 		service.save(mapper.map(parse(request)), Operation.SIGNUP, 1L);
 		return new ResponseEntity<>(CmsConfig.RESPONSE_SUCCESS, HttpStatus.OK);
 	}
 	
-	@PostMapping("/reset/{email}")
-	public ResponseEntity<String> pwreset(@PathVariable String email) {
-		if (service.requestPwreset(email)) {
+	@GetMapping("/reset/{email}")
+	public ResponseEntity<String> resetRequest(@PathVariable String email) {
+		if (service.requestPasswordReset(email)) {
 			// worked fine
 			return new ResponseEntity<>(CmsConfig.RESPONSE_SUCCESS, HttpStatus.OK);
 		}
 		// something gone wrong....
 		return new ResponseEntity<>(CmsConfig.RESPONSE_USER_NOT_FOUND, HttpStatus.BAD_REQUEST);
+	}
+	
+	@PostMapping("/reset")
+	public ResponseEntity<String> resetProcess(@Valid @RequestBody PasswordResetDTO request) {
+		service.processPasswordReset(request.getEmail(), request.getResetKey(), request.getPassword(), request.getPasswordConfirm());
+		return new ResponseEntity<>(CmsConfig.RESPONSE_SUCCESS, HttpStatus.OK);
 	}
 	
 	@GetMapping("/validate/{id}/{key}")
@@ -75,6 +82,7 @@ public class AccountController {
 			return new ResponseEntity<>(CmsConfig.RESPONSE_SUCCESS, HttpStatus.OK);
 		}
 		// something gone wrong....
+		// TODO: throw an exception instead
 		return new ResponseEntity<>(CmsConfig.RESPONSE_USER_NOT_FOUND, HttpStatus.BAD_REQUEST);
 	}
 	
@@ -85,10 +93,10 @@ public class AccountController {
 				.blocked(false)
 				.displayName(signup.getDisplayName())
 				.email(signup.getEmail())
-				.failedAttempts(0)
 				.idRole(Role.STANDARD.getId())
 				.name(signup.getName())
 				.password(signup.getPassword())
+				.passwordConfirm(signup.getPasswordConfirm())
 				.username(signup.getEmail())
 				.validated(false)
 				.build();

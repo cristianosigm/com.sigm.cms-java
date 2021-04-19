@@ -6,6 +6,7 @@ logging:
     root: info
     web: info
     org.springframework.web: debug
+    org.springframework.transaction: info
     com.cs.sigm: info
 server:
   forward-headers-strategy: framework
@@ -55,9 +56,11 @@ cms:
   mailPort: 2525
   mailFrom: development@gmail.com
   accountsBaseURL: http://localhost:8081/cms/accounts
-  pwMinSize: 3
+  pwResetFormURL: http://localhost:4200/reset-form
+  pwMinSize: 6
   pwMaxSize: 15
   pwLowercaseRequired: true
   pwUppercaseRequired: false
   pwNumericRequired: true
   pwSpecialRequired: false
+  pwMaxIncorrectTries: 2

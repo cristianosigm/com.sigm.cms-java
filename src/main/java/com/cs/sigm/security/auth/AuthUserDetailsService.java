@@ -14,18 +14,14 @@ import com.cs.sigm.repository.UserRepository;
 @Service("userDetailsService")
 @Transactional
 public class AuthUserDetailsService extends GrantedAuthoritiesGenerator implements UserDetailsService {
-
+	
 	@Autowired
 	private UserRepository userRepository;
-
+	
 	@Override
 	public UserDetails loadUserByUsername(final String email) {
-		// TODO: translate the messages
-		final com.cs.sigm.domain.User user = userRepository.findByEmail(email)
-				.orElseThrow(() -> new CmsAuthenticationException("Usuário ou senha inválidos."));
-
-		return new User(user.getEmail(), user.getPassword(), true, true, true, true,
-				getGrantedAuthorities(Role.getKeyById(user.getIdRole())));
+		final com.cs.sigm.domain.User user = userRepository.findByEmail(email).orElseThrow(() -> new CmsAuthenticationException());
+		return new User(user.getEmail(), user.getPassword(), user.getValidated(), true, true, !user.getBlocked(), getGrantedAuthorities(Role.getKeyById(user.getIdRole())));
 	}
-
+	
 }
