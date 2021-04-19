@@ -15,13 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @SpringBootTest
-// @TestMethodOrder(OrderAnnotation.class)
 public class RootControllerTest extends CmsTestSetup {
 	
 	private static final String BASE_URL = "/";
 	
 	@Test
-	// @Order(1)
 	public void shouldGetVersion() throws Exception {
 		log.info("|::. TEST .::| >>> Should get the current version");
 		final MvcResult result = getVersion().andExpect(status().isOk()).andReturn();

@@ -93,7 +93,6 @@ public class AccountController {
 				.blocked(false)
 				.displayName(signup.getDisplayName())
 				.email(signup.getEmail())
-//				.failedAttempts(0)
 				.idRole(Role.STANDARD.getId())
 				.name(signup.getName())
 				.password(signup.getPassword())

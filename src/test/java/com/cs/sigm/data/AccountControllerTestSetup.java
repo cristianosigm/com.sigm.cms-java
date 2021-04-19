@@ -7,7 +7,7 @@ import com.cs.sigm.adapter.domain.LoginDTO;
 import com.cs.sigm.adapter.domain.SignupDTO;
 
 @Disabled
-public class AccountControllerTestSetupData extends CmsTestSetup {
+public class AccountControllerTestSetup extends CmsTestSetup {
 	
 	private final int testSize = 10;
 	
@@ -15,7 +15,7 @@ public class AccountControllerTestSetupData extends CmsTestSetup {
 	
 	protected LoginDTO[] loginValid = new LoginDTO[testSize];
 	
-	public AccountControllerTestSetupData() {
+	public AccountControllerTestSetup() {
 		for (int pos = 0; pos < testSize; pos++) {
 			//@formatter:off
 			signupValid[pos] = SignupDTO.builder()

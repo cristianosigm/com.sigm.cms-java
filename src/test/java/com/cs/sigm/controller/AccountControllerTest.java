@@ -20,7 +20,7 @@ import com.cs.sigm.adapter.domain.LoginDTO;
 import com.cs.sigm.adapter.domain.PasswordResetDTO;
 import com.cs.sigm.adapter.domain.SignupDTO;
 import com.cs.sigm.config.CmsConfig;
-import com.cs.sigm.data.AccountControllerTestSetupData;
+import com.cs.sigm.data.AccountControllerTestSetup;
 import com.cs.sigm.domain.User;
 import com.cs.sigm.exception.CmsEntryNotFoundException;
 import com.cs.sigm.exception.ErrorCode;
@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @SpringBootTest
-public class AccountControllerTest extends AccountControllerTestSetupData {
+public class AccountControllerTest extends AccountControllerTestSetup {
 	
 	private static final String BASE_URL = "/accounts";
 	

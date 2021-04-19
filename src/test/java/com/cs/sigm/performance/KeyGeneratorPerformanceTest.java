@@ -18,15 +18,16 @@ public class KeyGeneratorPerformanceTest extends CmsTestSetup {
 	
 	@Test
 	public void shouldGenerateRandomKeyTest() throws Exception {
-		int size = 10;
+		int size = 100;
 		long start, end;
 		start = System.currentTimeMillis();
 		for (int i = 1; i < size; i++) {
 			log.info(" -> ".concat(generator.getRandomKey()));
 		}
 		end = System.currentTimeMillis();
-		log.warn("\n\n----------------------------------------------------------------------------\n\n :: RESULTS :: time taken to generate {} random keys: {}ms.", size,
-			(end - start) + "\n\n----------------------------------------------------------------------------\n\n");
+		log.warn(
+			"\n\n----------------------------------------------------------------------------\n\n :: RESULTS :: time taken to generate {} random keys: {}ms.\n\n----------------------------------------------------------------------------\n\n",
+			size, (end - start));
 	}
 	
 }

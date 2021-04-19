@@ -13,6 +13,7 @@ import com.cs.sigm.config.CmsConfig;
 import com.cs.sigm.domain.User;
 import com.cs.sigm.domain.UserLog;
 import com.cs.sigm.domain.fixed.Operation;
+import com.cs.sigm.domain.fixed.Role;
 import com.cs.sigm.exception.CmsAuthenticationException;
 import com.cs.sigm.exception.CmsEntryNotFoundException;
 import com.cs.sigm.exception.CmsMessagingUnavailableException;
@@ -80,6 +81,10 @@ public class UserService {
 		log.info(" Adding a validation key if not validated...");
 		if (!request.getValidated()) {
 			request.setValidationKey(generator.getRandomKey());
+		}
+		log.info(" Adding a Role if not setted...");
+		if (request.getIdRole() == null) {
+			request.setIdRole(Role.STANDARD.getId());
 		}
 		final User result = repository.save(request);
 		logRepository.save(UserLog.builder().idOperation(operation.getId()).idOperator(idOperator).idUser(result.getId()).build());
