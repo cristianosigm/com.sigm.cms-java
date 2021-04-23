@@ -9,24 +9,24 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 @SpringBootApplication
 public class CmsApplication {
-
+	
+	public static void main(final String[] args) {
+		SpringApplication.run(CmsApplication.class, args);
+	}
+	
 	@Bean
 	public MessageSource messageSource() {
-		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+		final ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
 		messageSource.setBasename("classpath:messages");
 		messageSource.setDefaultEncoding("UTF-8");
 		return messageSource;
 	}
-
+	
 	@Bean
 	public LocalValidatorFactoryBean validator() {
-		LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
+		final LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
 		bean.setValidationMessageSource(messageSource());
 		return bean;
 	}
-
-	public static void main(String[] args) {
-		SpringApplication.run(CmsApplication.class, args);
-	}
-
+	
 }

@@ -1,4 +1,4 @@
-package com.cs.sigm.controller;
+package com.cs.sigm.test.controller;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -20,11 +20,11 @@ import com.cs.sigm.adapter.domain.LoginDTO;
 import com.cs.sigm.adapter.domain.PasswordResetDTO;
 import com.cs.sigm.adapter.domain.SignupDTO;
 import com.cs.sigm.config.CmsConfig;
-import com.cs.sigm.data.AccountControllerTestSetup;
 import com.cs.sigm.domain.User;
 import com.cs.sigm.exception.CmsEntryNotFoundException;
 import com.cs.sigm.exception.ErrorCode;
 import com.cs.sigm.repository.UserRepository;
+import com.cs.sigm.test.data.AccountControllerTestSetup;
 
 import lombok.extern.slf4j.Slf4j;
 

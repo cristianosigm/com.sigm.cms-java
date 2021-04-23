@@ -1,11 +1,11 @@
-package com.cs.sigm.performance;
+package com.cs.sigm.test.performance;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.cs.sigm.CmsTestSetup;
 import com.cs.sigm.security.utils.KeyGenerator;
+import com.cs.sigm.test.CmsTestSetup;
 
 import lombok.extern.slf4j.Slf4j;
 

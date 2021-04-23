@@ -1,7 +1,6 @@
 package com.cs.sigm.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.mail.MessagingException;
 
@@ -51,8 +50,8 @@ public class UserService {
 	@Autowired
 	private UserLogRepository logRepository;
 	
-	public Optional<User> findSingle(Long id) {
-		return repository.findById(id);
+	public User findSingle(Long id) {
+		return repository.findById(id).orElseThrow(() -> new CmsEntryNotFoundException("User not found."));
 	}
 	
 	public List<User> findAll() {

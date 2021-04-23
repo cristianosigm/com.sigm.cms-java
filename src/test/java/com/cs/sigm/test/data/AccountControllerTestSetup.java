@@ -1,10 +1,10 @@
-package com.cs.sigm.data;
+package com.cs.sigm.test.data;
 
 import org.junit.jupiter.api.Disabled;
 
-import com.cs.sigm.CmsTestSetup;
 import com.cs.sigm.adapter.domain.LoginDTO;
 import com.cs.sigm.adapter.domain.SignupDTO;
+import com.cs.sigm.test.CmsTestSetup;
 
 @Disabled
 public class AccountControllerTestSetup extends CmsTestSetup {

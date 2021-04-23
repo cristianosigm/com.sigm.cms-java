@@ -1,4 +1,4 @@
-package com.cs.sigm;
+package com.cs.sigm.test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
