@@ -12,7 +12,7 @@ public enum Operation {
 	SIGNUP(3L, "signup"),
 	UPDATE(4L, "update"),
 	CHANGEPASSWORD(5L, "change password"),
-	APPROVE(6L, "approve"),
+//	APPROVE(6L, "approve"),
 	RESET(7L, "reset"),
 	REMOVE(8L, "remove"),
 	REJECT(9L, "reject");

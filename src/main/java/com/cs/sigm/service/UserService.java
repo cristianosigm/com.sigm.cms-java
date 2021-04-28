@@ -58,12 +58,12 @@ public class UserService {
 		return repository.findAll();
 	}
 	
-	public User save(User request, Operation operation, Long idOperator) {
+	public User save(User request, Operation operation, String operatorUsername) {
 		if (request.getId() != null) {
 			log.info(" Updating an existing user...");
 			final User curUser = repository.findById(request.getId()).orElseThrow(() -> new CmsEntryNotFoundException("Tried to update an User with an invalid ID."));
 			// attributes that cannot be updated from outside --------------------
-			request.setApproved(curUser.getApproved());
+			// request.setApproved(curUser.getApproved());
 			request.setBlocked(curUser.getBlocked());
 			request.setEmail(curUser.getEmail());
 			request.setFailedAttempts(curUser.getFailedAttempts());
@@ -86,9 +86,16 @@ public class UserService {
 			request.setIdRole(Role.STANDARD.getId());
 		}
 		final User result = repository.save(request);
-		logRepository.save(UserLog.builder().idOperation(operation.getId()).idOperator(idOperator).idUser(result.getId()).build());
+		log.info(" Adding the operator, ,if needed...");
+		Long idOperator = null;
+		if (operation.equals(Operation.SIGNUP)) {
+			idOperator = result.getId();
+		} else {
+			idOperator = getOperatorId(operatorUsername);
+		}
+		saveLog(operation, idOperator, result.getId(), null);
 		if (!result.getValidated()) {
-			log.info(" >> User saved. Requesting validation...");
+			log.info(" User saved. Requesting validation...");
 			try {
 				this.sendValidationMessage(result);
 			} catch (MessagingException e) {
@@ -98,11 +105,12 @@ public class UserService {
 		return result;
 	}
 	
-	public void deleteSingle(Long id) {
+	public void deleteSingle(Long id, String operatorUsername) {
 		if (repository.findById(id).isEmpty()) {
 			throw new CmsEntryNotFoundException("The requested entry does not exist, therefore, it was not deleted.");
 		}
 		repository.deleteById(id);
+		saveLog(Operation.REMOVE, getOperatorId(operatorUsername), id, null);
 	}
 	
 	public String getNameById(Long id) {
@@ -121,6 +129,7 @@ public class UserService {
 		repository.save(user);
 		try {
 			this.sendResetMessage(user);
+			saveLog(Operation.CHANGEPASSWORD, user.getId(), user.getId(), "Password reset requested.");
 			return true;
 		} catch (MessagingException e) {
 			throw new CmsMessagingUnavailableException("Failed to send a password reset message", e);
@@ -138,13 +147,14 @@ public class UserService {
 		user.setPassword(passwordEncoder.encode(password));
 		user.setBlocked(Boolean.FALSE);
 		this.repository.save(user);
+		saveLog(Operation.CHANGEPASSWORD, user.getId(), user.getId(), "Password reset processed.");
 		log.info("Password successfully reseted.");
 	}
 	
 	public boolean validate(Long id, String key) {
 		final User user = repository.findById(id).orElse(null);
 		if (user == null) {
-			log.warn("Tried to validate an non-existing user!");
+			log.warn("Tried to validate a non-existing user!");
 			return false;
 		}
 		log.info("user found. Checking key.");
@@ -153,6 +163,7 @@ public class UserService {
 		}
 		user.setValidated(true);
 		repository.save(user);
+		saveLog(Operation.VALIDATE, user.getId(), user.getId(), null);
 		return true;
 	}
 	
@@ -167,11 +178,8 @@ public class UserService {
 		}
 		checkUser.increaseFailedAttepts();
 		final User result = repository.save(checkUser);
-		
 		log.info(" > Current result attempts: " + result.getFailedAttempts().toString());
-		
 		return result;
-		
 	}
 	
 	private boolean validPasswordChangeRequest(User oldUser, User newUser) {
@@ -240,4 +248,11 @@ public class UserService {
 		//@formatter:on
 	}
 	
+	private void saveLog(Operation operation, Long idOperator, Long idUser, String notes) {
+		logRepository.save(UserLog.builder().idOperation(operation.getId()).idOperator(idOperator).idUser(idUser).notes(notes).build());
+	}
+	
+	private Long getOperatorId(String username) {
+		return repository.getIdByUsername(username);
+	}
 }

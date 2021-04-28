@@ -36,8 +36,8 @@ public class User {
 	@Column(name = "id_role")
 	private Long idRole;
 	
-	@Builder.Default
-	private Boolean approved = false;
+//	@Builder.Default
+//	private Boolean approved = false;
 	
 	@Builder.Default
 	private Boolean blocked = false;

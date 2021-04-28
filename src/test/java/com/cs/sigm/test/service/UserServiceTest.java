@@ -30,6 +30,8 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest
 public class UserServiceTest extends UserServiceTestSetup {
 	
+	private static final String OPERATOR_USERNAME = "";
+	
 	@Autowired
 	private UserService service;
 	
@@ -55,7 +57,7 @@ public class UserServiceTest extends UserServiceTestSetup {
 		request.setPassword("F41l3d#");
 		request.setPasswordConfirm("F41l3d#");
 		final Exception exception = assertThrows(CmsPasswordRequirementsNotMet.class, () -> {
-			service.save(mapper.map(request), Operation.CREATE, 1L);
+			service.save(mapper.map(request), Operation.CREATE, OPERATOR_USERNAME);
 		});
 		log.info(" MESSAGE CAUGHT: " + exception.getMessage());
 		assertTrue(exception.getMessage().contains("and be between"));
@@ -67,7 +69,7 @@ public class UserServiceTest extends UserServiceTestSetup {
 		request.setPassword("f41l3dup#r");
 		request.setPasswordConfirm("f41l3dup#r");
 		final Exception exception = assertThrows(CmsPasswordRequirementsNotMet.class, () -> {
-			service.save(mapper.map(request), Operation.CREATE, 1L);
+			service.save(mapper.map(request), Operation.CREATE, OPERATOR_USERNAME);
 		});
 		log.info(" MESSAGE CAUGHT: " + exception.getMessage());
 		assertTrue(exception.getMessage().contains(", one uppercase character"));
@@ -79,7 +81,7 @@ public class UserServiceTest extends UserServiceTestSetup {
 		request.setPassword("F41L3DL0W#R");
 		request.setPasswordConfirm("F41L3DL0W#R");
 		final Exception exception = assertThrows(CmsPasswordRequirementsNotMet.class, () -> {
-			service.save(mapper.map(request), Operation.CREATE, 1L);
+			service.save(mapper.map(request), Operation.CREATE, OPERATOR_USERNAME);
 		});
 		log.info(" MESSAGE CAUGHT: " + exception.getMessage());
 		assertTrue(exception.getMessage().contains(", one lowercase character"));
@@ -91,7 +93,7 @@ public class UserServiceTest extends UserServiceTestSetup {
 		request.setPassword("F4iledSp3c14l");
 		request.setPasswordConfirm("F4iledSp3c14l");
 		final Exception exception = assertThrows(CmsPasswordRequirementsNotMet.class, () -> {
-			service.save(mapper.map(request), Operation.CREATE, 1L);
+			service.save(mapper.map(request), Operation.CREATE, OPERATOR_USERNAME);
 		});
 		log.info(" MESSAGE CAUGHT: " + exception.getMessage());
 		assertTrue(exception.getMessage().contains(", one special character"));
@@ -103,7 +105,7 @@ public class UserServiceTest extends UserServiceTestSetup {
 		request.setPassword("P4ssw0rdN0tM4tc#");
 		request.setPasswordConfirm("P4ssw0rdN0tM4tch");
 		final Exception exception = assertThrows(CmsAuthenticationException.class, () -> {
-			service.save(mapper.map(request), Operation.CREATE, 1L);
+			service.save(mapper.map(request), Operation.CREATE, OPERATOR_USERNAME);
 		});
 		log.info(" MESSAGE CAUGHT: " + exception.getMessage());
 		assertTrue(exception.getMessage().contains("The confirmation password do not match"));
@@ -115,7 +117,7 @@ public class UserServiceTest extends UserServiceTestSetup {
 		request.setPassword("         ");
 		request.setPasswordConfirm("         ");
 		final Exception exception = assertThrows(CmsAuthenticationException.class, () -> {
-			service.save(mapper.map(request), Operation.CREATE, 1L);
+			service.save(mapper.map(request), Operation.CREATE, OPERATOR_USERNAME);
 		});
 		log.info(" MESSAGE CAUGHT: " + exception.getMessage());
 		assertTrue(exception.getMessage().contains("The new password must not be blank"));
@@ -124,9 +126,9 @@ public class UserServiceTest extends UserServiceTestSetup {
 	@Test
 	public void when_userValid_then_Success() throws Exception {
 		final UserDTO request = userValid[0];
-		final User result = service.save(mapper.map(request), Operation.CREATE, 1L);
+		final User result = service.save(mapper.map(request), Operation.CREATE, OPERATOR_USERNAME);
 		assertEquals(request.getEmail(), result.getUsername());
-		assertTrue(!result.getApproved().booleanValue());
+		assertTrue(!result.getValidated().booleanValue());
 	}
 	
 	@Test
@@ -152,33 +154,33 @@ public class UserServiceTest extends UserServiceTestSetup {
 	
 	@Test
 	public void when_findSingleWithValidId_then_Success() throws Exception {
-		final User usr = service.save(mapper.map(userValid[4]), Operation.CREATE, 1L);
+		final User usr = service.save(mapper.map(userValid[4]), Operation.CREATE, OPERATOR_USERNAME);
 		final User usrLoaded = service.findSingle(usr.getId());
 		assertTrue(usr.getId().longValue() == usrLoaded.getId().longValue());
 	}
 	
 	@Test
 	public void when_updateWithValidPasswordChange_then_Success() throws Exception {
-		final User response = service.save(mapper.map(userValid[5]), Operation.CREATE, 1L);
+		final User response = service.save(mapper.map(userValid[5]), Operation.CREATE, OPERATOR_USERNAME);
 		final UserDTO passwordUpdateRequest = mapper.map(response);
 		passwordUpdateRequest.setChangePassword(true);
 		passwordUpdateRequest.setCurrentPassword(userValid[5].getPassword());
 		passwordUpdateRequest.setPassword("V4l1dn3#");
 		passwordUpdateRequest.setPasswordConfirm("V4l1dn3#");
-		final User result = service.save(mapper.map(passwordUpdateRequest), Operation.UPDATE, 1L);
+		final User result = service.save(mapper.map(passwordUpdateRequest), Operation.UPDATE, OPERATOR_USERNAME);
 		Assertions.assertTrue(result != null && result.getId().longValue() == response.getId().longValue());
 	}
 	
 	@Test
 	public void when_updateWithInvalidPasswordChange_then_Fail() throws Exception {
-		final User response = service.save(mapper.map(userValid[6]), Operation.CREATE, 1L);
+		final User response = service.save(mapper.map(userValid[6]), Operation.CREATE, OPERATOR_USERNAME);
 		final UserDTO passwordUpdateRequest = mapper.map(response);
 		passwordUpdateRequest.setChangePassword(true);
 		passwordUpdateRequest.setCurrentPassword(userValid[6].getPassword());
 		passwordUpdateRequest.setPassword("1nv4l1dn3#");
 		passwordUpdateRequest.setPasswordConfirm("1nv4l1dn3#");
 		Assertions.assertThrows(CmsPasswordRequirementsNotMet.class, () -> {
-			service.save(mapper.map(passwordUpdateRequest), Operation.UPDATE, 1L);
+			service.save(mapper.map(passwordUpdateRequest), Operation.UPDATE, OPERATOR_USERNAME);
 		});
 	}
 	
@@ -191,27 +193,27 @@ public class UserServiceTest extends UserServiceTestSetup {
 	
 	@Test
 	public void when_deleteWithValidId_then_Success() throws Exception {
-		final User saved = service.save(mapper.map(userValid[7]), Operation.CREATE, 1L);
+		final User saved = service.save(mapper.map(userValid[7]), Operation.CREATE, OPERATOR_USERNAME);
 		final User found = service.findSingle(saved.getId());
 		assertTrue(found != null && found.getId().longValue() == saved.getId().longValue());
-		service.deleteSingle(saved.getId());
+		service.deleteSingle(saved.getId(), OPERATOR_USERNAME);
 		Assertions.assertThrows(CmsEntryNotFoundException.class, () -> {
 			service.findSingle(saved.getId());
 		});
 	}
 	
 	private void addSampleData01() {
-		final User result1 = service.save(mapper.map(userValid[1]), Operation.CREATE, 1L);
+		final User result1 = service.save(mapper.map(userValid[1]), Operation.CREATE, OPERATOR_USERNAME);
 		assertEquals(result1.getUsername(), userValid[1].getEmail());
-		final User result2 = service.save(mapper.map(userValid[2]), Operation.CREATE, 1L);
+		final User result2 = service.save(mapper.map(userValid[2]), Operation.CREATE, OPERATOR_USERNAME);
 		assertEquals(result2.getUsername(), userValid[2].getEmail());
-		final User result3 = service.save(mapper.map(userValid[3]), Operation.CREATE, 1L);
+		final User result3 = service.save(mapper.map(userValid[3]), Operation.CREATE, OPERATOR_USERNAME);
 		assertEquals(result3.getUsername(), userValid[3].getEmail());
 	}
 	
 	private void removeSampleData(List<User> usersToRemove) {
 		for (User user : usersToRemove) {
-			service.deleteSingle(user.getId());
+			service.deleteSingle(user.getId(), OPERATOR_USERNAME);
 		}
 		assertTrue(service.findAll().size() == 0);
 	}

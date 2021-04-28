@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +23,9 @@ import com.cs.sigm.domain.fixed.Operation;
 import com.cs.sigm.mapper.UserMapper;
 import com.cs.sigm.service.UserService;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestController
 @RequestMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
@@ -42,22 +47,29 @@ public class UserController {
 	}
 	
 	@PostMapping("/update")
-	public ResponseEntity<String> update(@Valid @RequestBody UserDTO request) {
+	public ResponseEntity<String> update(@Valid @RequestBody UserDTO request, @AuthenticationPrincipal User authUser) {
 		// TODO: set the admin user which performed the action.
-		service.save(mapper.map(request), Operation.UPDATE, 1L);
+		
+		log.info(" >>>> Current user: " + authUser.toString());
+		
+		service.save(mapper.map(request), Operation.UPDATE, authUser.getUsername());
 		return new ResponseEntity<>(CmsConfig.RESPONSE_SUCCESS, HttpStatus.OK);
 	}
 	
 	@PostMapping
-	public ResponseEntity<String> create(@Valid @RequestBody UserDTO request) {
+	public ResponseEntity<String> create(@Valid @RequestBody UserDTO request, @AuthenticationPrincipal User authUser) {
 		// TODO: set the admin user which performed the action.
-		service.save(mapper.map(request), Operation.CREATE, 1L);
+		
+		log.info(" >>>> Current user: " + authUser.toString());
+		
+		service.save(mapper.map(request), Operation.CREATE, authUser.getUsername());
 		return new ResponseEntity<>(CmsConfig.RESPONSE_SUCCESS, HttpStatus.OK);
 	}
 	
 	@PostMapping("/delete/{id}")
-	public ResponseEntity<String> delete(@PathVariable Long id) {
-		service.deleteSingle(id);
+	public ResponseEntity<String> delete(@PathVariable Long id, @AuthenticationPrincipal User authUser) {
+		log.info(" >>>> Current user: " + authUser.toString());
+		service.deleteSingle(id, authUser.getUsername());
 		return new ResponseEntity<>(CmsConfig.RESPONSE_SUCCESS, HttpStatus.OK);
 	}
 	

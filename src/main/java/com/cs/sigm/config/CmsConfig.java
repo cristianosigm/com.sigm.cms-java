@@ -19,7 +19,7 @@ public class CmsConfig {
 	public static final String RESPONSE_USER_NOT_FOUND = "USER_NOT_FOUND";
 	
 	// TODO: remove if I cannot find a consistent way to use it
-	public static final String LOGGING_FILE_PATH = System.getenv("LOGGING_FILE_PATH");
+//	public static final String LOGGING_FILE_PATH = System.getenv("LOGGING_FILE_PATH");
 	
 	private String version;
 	

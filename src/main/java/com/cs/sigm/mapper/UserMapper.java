@@ -35,7 +35,7 @@ public class UserMapper {
 			.id(response.getId())
 			.idRole(response.getIdRole())
 			.roleName(Role.getKeyById(response.getIdRole()))
-			.approved(response.getApproved())
+//			.approved(response.getApproved())
 			.blocked(response.getBlocked())
 			.displayName(response.getDisplayName())
 			.email(response.getEmail())

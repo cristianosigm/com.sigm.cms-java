@@ -54,8 +54,7 @@ public class AccountController {
 	
 	@PostMapping("/signup")
 	public ResponseEntity<String> signup(@Valid @RequestBody SignupDTO request) {
-		// TODO: what will be the ID of the Admin ID for signup?
-		service.save(mapper.map(parse(request)), Operation.SIGNUP, 1L);
+		service.save(mapper.map(parse(request)), Operation.SIGNUP, null);
 		return new ResponseEntity<>(CmsConfig.RESPONSE_SUCCESS, HttpStatus.OK);
 	}
 	
@@ -82,7 +81,7 @@ public class AccountController {
 			return new ResponseEntity<>(CmsConfig.RESPONSE_SUCCESS, HttpStatus.OK);
 		}
 		// something gone wrong....
-		// TODO: throw an exception instead
+		// TODO: throw an exception instead, or remove this piece of code
 		return new ResponseEntity<>(CmsConfig.RESPONSE_USER_NOT_FOUND, HttpStatus.BAD_REQUEST);
 	}
 	
