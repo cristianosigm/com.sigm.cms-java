@@ -16,20 +16,14 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserLogDTO implements Serializable {
+public class OperationLogDTO implements Serializable {
 
 	private static final long serialVersionUID = -3387349111681718644L;
 
 	private Long id;
 
-	private String operation;
-
-	private String operator;
-
-	private String user;
+	private String logEntry;
 
 	private Date dateOperation;
-
-	private String notes;
 
 }

@@ -10,13 +10,12 @@ import org.springframework.stereotype.Service;
 
 import com.cs.sigm.config.CmsConfig;
 import com.cs.sigm.domain.User;
-import com.cs.sigm.domain.UserLog;
+import com.cs.sigm.domain.fixed.Entity;
 import com.cs.sigm.domain.fixed.Operation;
 import com.cs.sigm.domain.fixed.Role;
 import com.cs.sigm.exception.CmsAuthenticationException;
 import com.cs.sigm.exception.CmsEntryNotFoundException;
 import com.cs.sigm.exception.CmsMessagingUnavailableException;
-import com.cs.sigm.repository.UserLogRepository;
 import com.cs.sigm.repository.UserRepository;
 import com.cs.sigm.security.mail.MailMessage;
 import com.cs.sigm.security.mail.MailService;
@@ -28,40 +27,41 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class UserService {
-	
+
 	@Autowired
 	private CmsConfig config;
-	
+
 	@Autowired
 	private MailService mailService;
-	
+
 	@Autowired
 	private KeyGenerator generator;
-	
+
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
+
 	@Autowired
 	private PasswordValidator passwordValidator;
-	
+
 	@Autowired
 	private UserRepository repository;
-	
+
 	@Autowired
-	private UserLogRepository logRepository;
-	
+	private OperationLogService logService;
+
 	public User findSingle(Long id) {
 		return repository.findById(id).orElseThrow(() -> new CmsEntryNotFoundException("User not found."));
 	}
-	
+
 	public List<User> findAll() {
 		return repository.findAll();
 	}
-	
+
 	public User save(User request, Operation operation, String operatorUsername) {
 		if (request.getId() != null) {
 			log.info(" Updating an existing user...");
-			final User curUser = repository.findById(request.getId()).orElseThrow(() -> new CmsEntryNotFoundException("Tried to update an User with an invalid ID."));
+			final User curUser = repository.findById(request.getId())
+					.orElseThrow(() -> new CmsEntryNotFoundException("Tried to update an User with an invalid ID."));
 			// attributes that cannot be updated from outside --------------------
 			// request.setApproved(curUser.getApproved());
 			request.setBlocked(curUser.getBlocked());
@@ -71,7 +71,9 @@ public class UserService {
 			request.setValidated(curUser.getValidated());
 			request.setValidationKey(curUser.getValidationKey());
 			// -------------------------------------------------------------------
-			request.setPassword(validPasswordChangeRequest(curUser, request) ? passwordEncoder.encode(request.getPassword()) : curUser.getPassword());
+			request.setPassword(
+					validPasswordChangeRequest(curUser, request) ? passwordEncoder.encode(request.getPassword())
+							: curUser.getPassword());
 		} else {
 			log.info(" Creating a new user...");
 			validPasswordConfirmation(request.getPassword(), request.getPasswordConfirm());
@@ -93,7 +95,7 @@ public class UserService {
 		} else {
 			idOperator = getOperatorId(operatorUsername);
 		}
-		saveLog(operation, idOperator, result.getId(), null);
+		logService.save(Entity.USER, operation, idOperator, result.getId(), null);
 		if (!result.getValidated()) {
 			log.info(" User saved. Requesting validation...");
 			try {
@@ -104,19 +106,19 @@ public class UserService {
 		}
 		return result;
 	}
-	
+
 	public void deleteSingle(Long id, String operatorUsername) {
 		if (repository.findById(id).isEmpty()) {
 			throw new CmsEntryNotFoundException("The requested entry does not exist, therefore, it was not deleted.");
 		}
 		repository.deleteById(id);
-		saveLog(Operation.REMOVE, getOperatorId(operatorUsername), id, null);
+		logService.save(Entity.USER, Operation.REMOVE, getOperatorId(operatorUsername), id, null);
 	}
-	
+
 	public String getNameById(Long id) {
 		return repository.getNameById(id);
 	}
-	
+
 	public boolean requestPasswordReset(String email) {
 		log.info("Trying to load an user with email: {}", email);
 		final User user = repository.findByEmail(email).orElse(null);
@@ -129,16 +131,17 @@ public class UserService {
 		repository.save(user);
 		try {
 			this.sendResetMessage(user);
-			saveLog(Operation.CHANGEPASSWORD, user.getId(), user.getId(), "Password reset requested.");
+			logService.save(Entity.USER, Operation.RESET, user.getId(), user.getId(), "Password reset requested.");
 			return true;
 		} catch (MessagingException e) {
 			throw new CmsMessagingUnavailableException("Failed to send a password reset message", e);
 		}
 	}
-	
+
 	public void processPasswordReset(String email, String key, String password, String passwordConfirm) {
 		log.info("Processing the password reset request...");
-		final User user = this.repository.findByEmail(email).orElseThrow(() -> new CmsEntryNotFoundException("User not found."));
+		final User user = this.repository.findByEmail(email)
+				.orElseThrow(() -> new CmsEntryNotFoundException("User not found."));
 		if (!user.getPasswordResetKey().equals(key)) {
 			throw new CmsAuthenticationException("Invalid password reset request.");
 		}
@@ -147,10 +150,11 @@ public class UserService {
 		user.setPassword(passwordEncoder.encode(password));
 		user.setBlocked(Boolean.FALSE);
 		this.repository.save(user);
-		saveLog(Operation.CHANGEPASSWORD, user.getId(), user.getId(), "Password reset processed.");
+		logService.save(Entity.USER, Operation.CHANGEPASSWORD, user.getId(), user.getId(),
+				"Password reset request processed.");
 		log.info("Password successfully reseted.");
 	}
-	
+
 	public boolean validate(Long id, String key) {
 		final User user = repository.findById(id).orElse(null);
 		if (user == null) {
@@ -163,10 +167,10 @@ public class UserService {
 		}
 		user.setValidated(true);
 		repository.save(user);
-		saveLog(Operation.VALIDATE, user.getId(), user.getId(), null);
+		logService.save(Entity.USER, Operation.VALIDATE, user.getId(), user.getId(), null);
 		return true;
 	}
-	
+
 	public User checkAccountLock(String username) {
 		final User checkUser = repository.findByEmail(username).orElseThrow(() -> new CmsAuthenticationException());
 		log.info("User found. Current failed attempts: " + checkUser.getFailedAttempts().toString());
@@ -181,7 +185,7 @@ public class UserService {
 		log.info(" > Current result attempts: " + result.getFailedAttempts().toString());
 		return result;
 	}
-	
+
 	private boolean validPasswordChangeRequest(User oldUser, User newUser) {
 		if (newUser.getChangePassword()) {
 			log.info("Password change requested. Analyzing...");
@@ -194,7 +198,7 @@ public class UserService {
 		log.info("Password not changed.");
 		return false;
 	}
-	
+
 	private void validPasswordConfirmation(String password, String passwordConfirm) {
 		if (password == null || password.isBlank() || passwordConfirm == null || passwordConfirm.isBlank()) {
 			throw new CmsAuthenticationException("The new password must not be blank.");
@@ -204,7 +208,7 @@ public class UserService {
 		}
 		passwordValidator.validate(password);
 	}
-	
+
 	private void sendResetMessage(User user) throws MessagingException {
 		log.info("Sending a password reset mail from {} to {}.", config.getMailFrom(), user.getEmail());
 		//@formatter:off
@@ -226,7 +230,7 @@ public class UserService {
 		);
 		//@formatter:on
 	}
-	
+
 	private void sendValidationMessage(User user) throws MessagingException {
 		log.info("Sending the optin mail from {} to {}.", config.getMailFrom(), user.getEmail());
 		//@formatter:off
@@ -247,11 +251,7 @@ public class UserService {
 		);
 		//@formatter:on
 	}
-	
-	private void saveLog(Operation operation, Long idOperator, Long idUser, String notes) {
-		logRepository.save(UserLog.builder().idOperation(operation.getId()).idOperator(idOperator).idUser(idUser).notes(notes).build());
-	}
-	
+
 	private Long getOperatorId(String username) {
 		return repository.getIdByUsername(username);
 	}

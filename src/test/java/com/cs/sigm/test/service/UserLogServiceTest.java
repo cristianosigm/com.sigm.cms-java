@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.cs.sigm.service.UserLogService;
+import com.cs.sigm.service.OperationLogService;
 import com.cs.sigm.test.data.UserLogServiceTestSetup;
 
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserLogServiceTest extends UserLogServiceTestSetup {
 	
 	@Autowired
-	private UserLogService logService;
+	private OperationLogService logService;
 	
 	@Test
 	public void when_UserCreated_then_ShouldCreateLog() {
