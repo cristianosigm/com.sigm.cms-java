@@ -46,7 +46,7 @@ cms:
   mailUsername: test@gmail.com
   mailPassword: test
   mailHost: localhost
-  mailPort: 2525
+  mailPort: 2526
   mailFrom: development@gmail.com
   accountsBaseURL: http://localhost:8081/cms/accounts
   pwMinSize: 8

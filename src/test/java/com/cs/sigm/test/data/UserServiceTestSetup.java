@@ -8,7 +8,7 @@ import com.cs.sigm.test.CmsTestSetup;
 @Disabled
 public class UserServiceTestSetup extends CmsTestSetup {
 	
-	private final int testSize = 10;
+	private final int testSize = 14;
 	
 	protected UserDTO[] userValid = new UserDTO[testSize];
 	

@@ -8,16 +8,14 @@ import com.cs.sigm.test.CmsTestSetup;
 
 @Disabled
 public class AccountControllerTestSetup extends CmsTestSetup {
-	
+
 	private final int testSize = 10;
-	
+
 	protected SignupDTO[] signupValid = new SignupDTO[testSize];
-	
-	protected LoginDTO[] loginValid = new LoginDTO[testSize];
-	
+
+	//@formatter:off
 	public AccountControllerTestSetup() {
 		for (int pos = 0; pos < testSize; pos++) {
-			//@formatter:off
 			signupValid[pos] = SignupDTO.builder()
 				.displayName("Signup " + pos)
 				.email("signup" + pos + "@test.com")
@@ -25,15 +23,9 @@ public class AccountControllerTestSetup extends CmsTestSetup {
 				.password("Val1dt$t")
 				.passwordConfirm("Val1dt$t")
 				.build();
-			loginValid[pos] = LoginDTO.builder()
-				.password("Val1dt$t")
-				.username("signup" + pos + "@test.com")
-				.build();
-			//@formatter:on
 		}
 	}
-	
-	//@formatter:off
+
 	protected SignupDTO signupNotValidated = SignupDTO.builder()
 		.displayName("Signup Not Validate")
 		.email("signupnv@test.com")
@@ -52,5 +44,5 @@ public class AccountControllerTestSetup extends CmsTestSetup {
 		.username("signupinvalid@test.com")
 		.build();	
 	// @formatter:on
-	
+
 }

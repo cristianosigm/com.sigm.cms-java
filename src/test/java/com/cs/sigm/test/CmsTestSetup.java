@@ -16,6 +16,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @ContextConfiguration
 public abstract class CmsTestSetup {
 	
+	protected static final int SMTP_PORT = 2526;
+	
 	@Autowired
 	protected MockMvc mvc;
 	

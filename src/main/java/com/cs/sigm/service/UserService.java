@@ -15,6 +15,7 @@ import com.cs.sigm.domain.fixed.Operation;
 import com.cs.sigm.domain.fixed.Role;
 import com.cs.sigm.exception.CmsAuthenticationException;
 import com.cs.sigm.exception.CmsEntryNotFoundException;
+import com.cs.sigm.exception.CmsEmailAlreadyUsedException;
 import com.cs.sigm.exception.CmsMessagingUnavailableException;
 import com.cs.sigm.repository.UserRepository;
 import com.cs.sigm.security.mail.MailMessage;
@@ -76,6 +77,9 @@ public class UserService {
 							: curUser.getPassword());
 		} else {
 			log.info(" Creating a new user...");
+			if (userExists(request.getUsername())) {
+				throw new CmsEmailAlreadyUsedException("This email was already used.");
+			}
 			validPasswordConfirmation(request.getPassword(), request.getPasswordConfirm());
 			request.setPassword(passwordEncoder.encode(request.getPassword()));
 		}
@@ -184,6 +188,10 @@ public class UserService {
 		final User result = repository.save(checkUser);
 		log.info(" > Current result attempts: " + result.getFailedAttempts().toString());
 		return result;
+	}
+
+	private boolean userExists(String username) {
+		return repository.findByEmail(username).isPresent();
 	}
 
 	private boolean validPasswordChangeRequest(User oldUser, User newUser) {
